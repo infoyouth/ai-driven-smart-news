@@ -13,10 +13,11 @@ permissions:
 
 jobs:
   python_code_checks:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-24.04, windows-latest]
+        python-version: ["3.9", "3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: 🚗 Checkout Code
         uses: actions/checkout@v4

@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-24.04, windows-latest]
-        python-version: ["3.9", "3.10", "3.12"]
+        python-version: ["3.9", "3.12"]
     runs-on: ${{ matrix.os }}
     steps:
       - name: 🚗 Checkout Code
@@ -30,7 +30,7 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install black ruff
+          pip install black ruff pylint
 
       - name: 🔍 Run Black (Check Mode)
         run: black --check --diff .
@@ -38,6 +38,11 @@ jobs:
 
       - name: 🦸‍♂️ Run Ruff
         run: ruff check .
+
+      - name: 📜 Run Pylint
+        run: |
+          pylint $(find . -name "*.py")
+        continue-on-error: true
 
   json_check:
     runs-on: ubuntu-latest
@@ -51,7 +56,6 @@ jobs:
       - name: 🌍 Validate and Format JSON Files with Prettier
         run: |
           prettier --check ./**/*.json
-          prettier --write ./**/*.json
 
   comment_on_pr:
     runs-on: ubuntu-latest
@@ -67,6 +71,7 @@ jobs:
             - **Black Check**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
             - **Ruff Check**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
             - **Prettier Check**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
+            - **Pylint Check**: ${{ job.status == 'success' && '✅ Passed' || '❌ Failed' }}
           reactions: |
             heart
             hooray

@@ -1,0 +1,66 @@
+[tool.poetry]
+name = "ai-driven-smart-news"
+version = "0.1.0"
+description = "An AI-driven application for processing news and interacting with external services like APIs and Discord."
+authors = ["Youth Innovations <info.youthinno@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/infoyouth/ai-driven-smart-news"
+repository = "https://github.com/infoyouth/ai-driven-smart-news"
+keywords = ["AI", "news", "Discord", "automation"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "^2.31.0"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+black = "^23.3.0"
+ruff = "^0.0.289"
+pylint = "^2.17.5"
+isort = "^5.12.0"
+mypy = "^1.5.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py39"]
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "W"]
+ignore = ["E501"]
+fix = true
+
+[tool.pylint.lint]
+ignore = ["tests", "migrations"]
+select = ["F", "E", "W", "C", "R"]
+
+[tool.coverage.run]
+branch = true
+source = ["core", "utils", "logger"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "--maxfail=5 --disable-warnings"
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true

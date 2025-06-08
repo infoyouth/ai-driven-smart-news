@@ -45,7 +45,7 @@ jobs:
         continue-on-error: true
 
   json_check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: 🚗 Checkout Code
         uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
           prettier --check ./**/*.json
 
   comment_on_pr:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [python_code_checks, json_check]
     steps:
       - name: 🚀 Post Status Comment on PR
@@ -78,7 +78,7 @@ jobs:
             laugh
 
   final_status:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [python_code_checks, json_check]
     steps:
       - name: ✅ Final Status
@@ -86,7 +86,7 @@ jobs:
         run: echo "🎉 All checks passed successfully! 🎉"
 
   failure_status:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: failure()
     needs: [python_code_checks, json_check]
     steps:

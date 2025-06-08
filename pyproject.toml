@@ -12,6 +12,7 @@ keywords = ["AI", "news", "Discord", "automation"]
 [tool.poetry.dependencies]
 python = "^3.9"
 requests = "^2.31.0"
+colorlog = "^6.7.0"
 
 [tool.poetry.group.dev]
 optional = true

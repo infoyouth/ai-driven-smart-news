@@ -1,7 +1,15 @@
 """
-This module sets up logging configuration, including colorized
-output for console logging and rotating file handlers for log
-persistence.
+logger_config.py
+-----------------
+This module is responsible for setting up the logging configuration for the
+application. It provides a colorized logger with support for rotating file
+handlers to ensure logs are stored persistently and are easy to read.
+
+The `setup_logger` function initializes the logger, while the `get_logger`
+function provides a reusable logger instance for other modules.
+
+Author: infoyouth
+Date: 2025-06-08
 """
 
 import logging

@@ -56,7 +56,10 @@ class NewsFetcher:
         return endpoint
 
     def fetch_news(
-        self, source_name: str, country: Optional[str] = None, category: Optional[str] = None
+        self,
+        source_name: str,
+        country: Optional[str] = None,
+        category: Optional[str] = None,
     ) -> Dict:
         """
         Fetch news from the specified source.
@@ -74,7 +77,9 @@ class NewsFetcher:
             logger.error(f"Source not found: {source_name}")
             return {}
 
-        endpoint = self._construct_endpoint(source, "top_headlines", country=country, category=category)
+        endpoint = self._construct_endpoint(
+            source, "top_headlines", country=country, category=category
+        )
         params = {
             "apiKey": source.get("api_key"),
             "country": country,
@@ -111,13 +116,16 @@ class NewsFetcher:
         results = []
         for country in source["available_countries"]:
             for category in source["available_categories"]:
-                logger.debug(f"Fetching news for country: {country}, category: {category}")
+                logger.debug(
+                    f"Fetching news for country: {country}, category: {category}"
+                )
                 news = self.fetch_news(source_name, country=country, category=category)
                 if news:
                     results.extend(news.get("articles", []))
         logger.info(f"Fetched {len(results)} articles.")
         return results
-    
+
+
 if __name__ == "__main__":
     CONFIG_PATH = "configs/api_config.json"
     try:

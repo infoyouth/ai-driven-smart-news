@@ -39,10 +39,13 @@ class NewsSaver:
         except Exception as e:
             logger.error(f"Error saving news to file: {e}")
             raise
-        
+
+
 if __name__ == "__main__":
     OUTPUT_FILE = "test_news.json"
-    test_news = [{"title": "Sample News", "description": "This is a test news article."}]
+    test_news = [
+        {"title": "Sample News", "description": "This is a test news article."}
+    ]
     try:
         NewsSaver.save_news_to_file(test_news, OUTPUT_FILE)
         logger.info("News saved successfully.")

@@ -13,7 +13,7 @@ Date: 2025-06-08
 """
 import os
 import json
-from typing import Optional, Dict
+from typing import Optional
 from logger.logger_config import setup_logger
 
 logger = setup_logger()
@@ -57,9 +57,15 @@ class APIConfigLoader:
                     if source.get("api_key_env"):
                         source["api_key"] = os.getenv(source["api_key_env"])
                         if not source["api_key"]:
-                            logger.error(f"API key not found for source: {source['name']}")
-                            raise ValueError(f"API key missing for source: {source['name']}")
-                        logger.debug(f"Loaded API key for {source['name']}: {source['api_key']}")
+                            logger.error(
+                                f"API key not found for source: {source['name']}"
+                            )
+                            raise ValueError(
+                                f"API key missing for source: {source['name']}"
+                            )
+                        logger.debug(
+                            f"Loaded API key for {source['name']}: {source['api_key']}"
+                        )
                 logger.info("API configuration loaded successfully.")
                 return config
         except FileNotFoundError:
@@ -79,8 +85,11 @@ class APIConfigLoader:
         Returns:
             dict: Source configuration if found, otherwise None.
         """
-        return next((s for s in self.config["sources"] if s["name"] == source_name), None)
-    
+        return next(
+            (s for s in self.config["sources"] if s["name"] == source_name), None
+        )
+
+
 if __name__ == "__main__":
     CONFIG_PATH = "configs/api_config.json"
     try:

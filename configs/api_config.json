@@ -2,10 +2,11 @@
     "sources": [
         {
             "name": "NewsAPI",
+            "base_url": "https://newsapi.org/",
             "api_key_env": "NEWSAPI_KEY",
             "endpoints": {
-                "top_headlines": "https://newsapi.org/v2/top-headlines",
-                "everything": "https://newsapi.org/v2/everything"
+                "top_headlines": "v2/top-headlines",
+                "everything": "v2/everything"
             },
             "default_params": {
                 "language": "en",

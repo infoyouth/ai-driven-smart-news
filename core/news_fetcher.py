@@ -15,6 +15,8 @@ import requests
 from typing import Optional, List, Dict
 from logger.logger_config import setup_logger
 from core.api_config_loader import APIConfigLoader
+from urllib.parse import urljoin
+from concurrent.futures import ThreadPoolExecutor
 
 logger = setup_logger()
 
@@ -48,9 +50,10 @@ class NewsFetcher:
         Returns:
             str: Constructed endpoint URL.
         """
+        logger.debug(f"Source configuration: {source}")
+        base_url = source["base_url"]
         endpoint = source["endpoints"][endpoint_name]
-        if "<BASE_URL>" in endpoint:
-            endpoint = endpoint.replace("<BASE_URL>", source["base_url"])
+        endpoint = urljoin(base_url, endpoint)
         for key, value in kwargs.items():
             endpoint = endpoint.replace(f"<{key}>", value)
         return endpoint
@@ -87,20 +90,23 @@ class NewsFetcher:
             "pageSize": source["default_params"]["pageSize"],
             "language": source["default_params"]["language"],
         }
-        logger.debug(f"Requesting URL: {endpoint} with params: {params}")
 
         try:
             response = requests.get(endpoint, params=params)
             response.raise_for_status()
+            data = response.json()
+            if "articles" not in data:
+                logger.error(f"Invalid response structure: {data}")
+                return {}
             logger.info(f"Fetched news for country: {country}, category: {category}")
-            return response.json()
+            return data
         except requests.exceptions.HTTPError as e:
             logger.error(f"Error fetching news: {e} (Line: {e.response.status_code})")
             return {}
 
     def fetch_latest_news(self, source_name: str) -> List[Dict]:
         """
-        Fetch the latest news for all countries and categories.
+        Fetch the latest news for all countries and categories concurrently.
 
         Args:
             source_name (str): Name of the source.
@@ -114,14 +120,22 @@ class NewsFetcher:
             return []
 
         results = []
-        for country in source["available_countries"]:
-            for category in source["available_categories"]:
-                logger.debug(
-                    f"Fetching news for country: {country}, category: {category}"
-                )
-                news = self.fetch_news(source_name, country=country, category=category)
+
+        def fetch_for_country_and_category(country, category):
+            logger.debug(f"Fetching news for country: {country}, category: {category}")
+            return self.fetch_news(source_name, country=country, category=category)
+
+        with ThreadPoolExecutor() as executor:
+            futures = [
+                executor.submit(fetch_for_country_and_category, country, category)
+                for country in source["available_countries"]
+                for category in source["available_categories"]
+            ]
+            for future in futures:
+                news = future.result()
                 if news:
                     results.extend(news.get("articles", []))
+
         logger.info(f"Fetched {len(results)} articles.")
         return results
 

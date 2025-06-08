@@ -54,6 +54,11 @@ class APIConfigLoader:
             with open(self.config_path, "r") as file:
                 config = json.load(file)
                 for source in config["sources"]:
+                    if "base_url" not in source:
+                        logger.error(f"Missing 'base_url' in source: {source['name']}")
+                        raise ValueError(
+                            f"Missing 'base_url' in source: {source['name']}"
+                        )
                     if source.get("api_key_env"):
                         source["api_key"] = os.getenv(source["api_key_env"])
                         if not source["api_key"]:

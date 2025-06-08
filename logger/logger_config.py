@@ -6,18 +6,33 @@ persistence.
 
 import logging
 from logging.handlers import RotatingFileHandler
-
 import os
 import colorlog
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "DEBUG")
 LOG_FILE = os.getenv("LOG_FILE", "app.log")
-LOG_FILE_SIZE = int(os.getenv("LOG_FILE_SIZE", "10485760"))
-LOG_BACKUP_COUNT = int(os.getenv("LOG_BACKUP_COUNT", "5"))
+LOG_FILE_SIZE = max(int(os.getenv("LOG_FILE_SIZE", "10485760")), 1)
+LOG_BACKUP_COUNT = max(int(os.getenv("LOG_BACKUP_COUNT", "5")), 1)
 
 
-def setup_logger(log_level=LOG_LEVEL):
-    """Set up and return a colorized logger with rotating file handler."""
+def setup_logger(
+    log_level: str = LOG_LEVEL,
+    log_file: str = LOG_FILE,
+    log_file_size: int = LOG_FILE_SIZE,
+    log_backup_count: int = LOG_BACKUP_COUNT,
+) -> logging.Logger:
+    """
+    Set up and return a colorized logger with rotating file handler.
+
+    Args:
+        log_level (str): Logging level (e.g., DEBUG, INFO).
+        log_file (str): Path to the log file.
+        log_file_size (int): Maximum size of the log file in bytes.
+        log_backup_count (int): Number of backup log files to keep.
+
+    Returns:
+        logging.Logger: Configured logger instance.
+    """
     log = logging.getLogger(__name__)
 
     if not log.hasHandlers():
@@ -43,7 +58,7 @@ def setup_logger(log_level=LOG_LEVEL):
         stream_handler.setFormatter(formatter)
 
         file_handler = RotatingFileHandler(
-            LOG_FILE, maxBytes=LOG_FILE_SIZE, backupCount=LOG_BACKUP_COUNT
+            log_file, maxBytes=log_file_size, backupCount=log_backup_count
         )
         file_handler.setFormatter(formatter)
 
@@ -55,14 +70,17 @@ def setup_logger(log_level=LOG_LEVEL):
     return log
 
 
-def get_logger(name=__name__):
+def get_logger(name: str = __name__) -> logging.Logger:
     """Get the configured logger."""
     return logging.getLogger(name)
 
 
+# Default logger instance
+DEFAULT_LOGGER = setup_logger()
+
 # Example usage
 if __name__ == "__main__":
-    logger = setup_logger()
+    logger = DEFAULT_LOGGER
     logger.debug("This is a debug message")
     logger.info("This is an info message")
     logger.warning("This is a warning message")

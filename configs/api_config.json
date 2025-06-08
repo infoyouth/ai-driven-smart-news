@@ -1,0 +1,33 @@
+{
+    "sources": [
+        {
+            "name": "NewsAPI",
+            "api_key_env": "NEWSAPI_KEY",
+            "endpoints": {
+                "top_headlines": "https://newsapi.org/v2/top-headlines",
+                "everything": "https://newsapi.org/v2/everything"
+            },
+            "default_params": {
+                "language": "en",
+                "pageSize": 20
+            },
+            "available_sources": [
+                "bbc-news",
+                "cnn",
+                "fox-news",
+                "google-news"
+            ],
+            "available_countries": [
+                "in",
+                "us",
+                "gb"
+            ],
+            "available_categories": [
+                "general",
+                "health",
+                "science",
+                "technology"
+            ]
+        }
+    ]
+}

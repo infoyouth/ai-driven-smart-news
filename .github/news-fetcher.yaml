@@ -1,0 +1,47 @@
+name: AI Driven News 🚀
+
+on:
+  workflow_dispatch: # Allow manual triggering of the workflow
+  schedule: # Run the workflow on a schedule
+    - cron: "0 3 * * *" # Runs daily at 3 AM UTC
+
+jobs:
+  run_main_script:
+    runs-on: ubuntu-24.04
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Set the API key from GitHub Secrets
+    steps:
+      - name: 🚗 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+        run: echo "✅ Code checked out successfully."
+
+      - name: 🐍 Set Up Python Environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+        run: echo "✅ Python environment set up successfully."
+
+      - name: 📦 Install Dependencies
+        run: |
+          echo "🔄 Installing dependencies..."
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+        run: echo "✅ Dependencies installed successfully."
+
+      - name: 🧪 Verify Environment
+        run: |
+          echo "🔍 Verifying installed dependencies..."
+          poetry show
+        run: echo "✅ Environment verified successfully."
+
+      - name: 📝 Run Main Script
+        run: |
+          echo "🚀 Running main.py..."
+          python main.py
+        run: echo "✅ main.py executed successfully."
+
+      - name: 🌍 Beautify Logs
+        run: echo "🎉 Workflow completed successfully! 🎉"

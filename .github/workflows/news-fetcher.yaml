@@ -10,38 +10,53 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Set the API key from GitHub Secrets
+      NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }} # Set the NewsAPI key from GitHub Secrets
     steps:
       - name: 🚗 Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-        run: echo "✅ Code checked out successfully."
 
       - name: 🐍 Set Up Python Environment
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-        run: echo "✅ Python environment set up successfully."
 
-      - name: 📦 Install Dependencies
+      - name: 🗄️ Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: 📦 Install Poetry
         run: |
-          echo "🔄 Installing dependencies..."
+          echo "🔄 Installing Poetry..."
           python -m pip install --upgrade pip
           pip install poetry
-          poetry install
-        run: echo "✅ Dependencies installed successfully."
 
-      - name: 🧪 Verify Environment
+      - name: 📦 Install Dependencies and Project
         run: |
-          echo "🔍 Verifying installed dependencies..."
-          poetry show
-        run: echo "✅ Environment verified successfully."
+          echo "🔄 Installing dependencies and project..."
+          poetry install
+
+      - name: 🧪 Debug Python Environment
+        run: |
+          echo "Python executable: $(which python)"
+          echo "Python version: $(python --version)"
+          echo "Installed packages:"
+          python -m pip list
+
+      - name: 🧪 Set PYTHONPATH
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          echo "PYTHONPATH set to: $PYTHONPATH"
 
       - name: 📝 Run Main Script
         run: |
-          echo "🚀 Running main.py..."
-          python main.py
-        run: echo "✅ main.py executed successfully."
+          echo "🚀 Running main.py within Poetry environment..."
+          poetry run python main.py
 
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

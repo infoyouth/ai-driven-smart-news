@@ -15,6 +15,7 @@ from core.api_config_loader import APIConfigLoader
 from core.news_fetcher import NewsFetcher
 from core.news_saver import NewsSaver
 from logger.logger_config import setup_logger
+from core.gemini_processor import main as gemini_main
 import asyncio
 
 logger = setup_logger()
@@ -36,8 +37,6 @@ if __name__ == "__main__":
         NewsSaver.save_news_to_file(latest_news, OUTPUT_FILE)
 
         # Process saved news using GeminiNewsProcessor
-        from core.news_processor import main as processor_main
-
-        asyncio.run(processor_main())  # Call the main function from news_processor.py
+        asyncio.run(gemini_main())
     except Exception as e:
         logger.critical(f"An unexpected error occurred: {e}")

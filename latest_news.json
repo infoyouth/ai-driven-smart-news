@@ -1,6 +1,32 @@
 [
     {
         "source": {
+            "id": "the-washington-post",
+            "name": "The Washington Post"
+        },
+        "author": "Thomas Floyd",
+        "title": "Tony Awards 2025: How to watch, who\u2019s hosting and favorites to win - The Washington Post",
+        "description": "Plus who\u2019s performing at the Tonys, which Broadway shows have the most nominations and the whole Patti LuPone situation.",
+        "url": "https://www.washingtonpost.com/entertainment/theater/2025/06/08/tony-awards-2025-how-to-watch-stream/",
+        "urlToImage": "https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/42CE6ARGUJCUHIMO6CWAX6DXMU_size-normalized.jpg&w=1440",
+        "publishedAt": "2025-06-08T11:32:10Z",
+        "content": "The Tony Awards on Sunday night may have several down-to-the-wire races, but one thing about the 2024-25 theater season is certain: Broadway rallied at the box office.\r\nPowered by starry productions \u2026 [+225 chars]"
+    },
+    {
+        "source": {
+            "id": "associated-press",
+            "name": "Associated Press"
+        },
+        "author": null,
+        "title": "Athletes express concern over NCAA settlement\u2019s impact on non-revenue sports - AP News",
+        "description": "The $2.8 billion NCAA settlement is being touted as a path to stability for college sports, clearing the way for schools to pay their athletes within certain parameters. Football and basketball players are expected to be the highest-paid athletes on campus. M\u2026",
+        "url": "https://apnews.com/article/ncaa-settlement-7aab7a3f3ee0a045b1cf1ce69e029b45",
+        "urlToImage": "https://dims.apnews.com/dims4/default/c63eabc/2147483647/strip/true/crop/4959x2789+0+256/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F58%2F0b%2F373f17c1b11d9a90f2bc447542fb%2F24fbb8ffb45c4f3bbf154b56e08ae9ee",
+        "publishedAt": "2025-06-08T11:10:00Z",
+        "content": "Sydney Moore and Sabrina Ootsburg were surrounded by hundreds of college athletes at AthleteCon when news broke that the $2.8 billion NCAA settlement had been approved by a federal judge. In a room f\u2026 [+5296 chars]"
+    },
+    {
+        "source": {
             "id": "the-verge",
             "name": "The Verge"
         },
@@ -40,6 +66,45 @@
     },
     {
         "source": {
+            "id": "associated-press",
+            "name": "Associated Press"
+        },
+        "author": null,
+        "title": "New disputes emerge ahead of US-China trade talks in London - AP News",
+        "description": "U.S.-China trade talks in London this week are expected to take up a series of disputes that have buffeted relations. Both sides agreed in Geneva last month to a 90-day suspension of most of the tariffs they had imposed on each other in an escalating trade wa\u2026",
+        "url": "https://apnews.com/article/us-china-tariff-trump-xi-trade-london-talks-7db44c1697a7c4cf781e0e1796470625",
+        "urlToImage": "https://dims.apnews.com/dims4/default/f0c4813/2147483647/strip/true/crop/3775x2123+0+197/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F75%2Fe5%2F278a1c94f1d2c83094bbe54211bc%2F7af34119a3a64029b839891e5bea5a08",
+        "publishedAt": "2025-06-08T07:36:00Z",
+        "content": "BEIJING (AP) U.S.-China trade talks in London this week are expected to take up a series of fresh disputes that have buffeted relations, threatening a fragile truce over tariffs.\r\nBoth sides agreed i\u2026 [+4125 chars]"
+    },
+    {
+        "source": {
+            "id": "the-washington-post",
+            "name": "The Washington Post"
+        },
+        "author": "Emma Uber, Jackson Barton, Daniel Wu, Martin Weil",
+        "title": "2 juveniles stabbed at Dupont park and 1 man shot nearby during Pride - The Washington Post",
+        "description": "The stabbings came after the park in Dupont was reopened at the request of the D.C. government.",
+        "url": "https://www.washingtonpost.com/dc-md-va/2025/06/07/dupont-circle-park-stabbing-pride/",
+        "urlToImage": "https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/63YISKDYKELBJOIOQUZ57TRIJE_size-normalized.jpg&w=1440",
+        "publishedAt": "2025-06-08T06:39:00Z",
+        "content": "Two juveniles were stabbed in Dupont Circle Park on Saturday evening during Pride festivities and a man was later shot near the park, D.C. police said.\r\nThe two stabbing victims, both male, were cons\u2026 [+2837 chars]"
+    },
+    {
+        "source": {
+            "id": "bloomberg",
+            "name": "Bloomberg"
+        },
+        "author": "Vince Golle, Craig Stirling",
+        "title": "US Inflation to Tick Higher as Tariffs Reach Consumers - Bloomberg",
+        "description": "US consumers probably saw slightly faster inflation in May, notably for merchandise, as companies gradually pass along higher import duties.",
+        "url": "https://www.bloomberg.com/news/articles/2025-06-07/us-inflation-to-tick-higher-as-tariffs-reach-consumers",
+        "urlToImage": "https://assets.bwbx.io/images/users/iqjWHBFdfxIU/i7QcGBoawjtw/v0/1200x800.jpg",
+        "publishedAt": "2025-06-08T05:39:00Z",
+        "content": "Subscribe to Economics Daily for the latest news and analysis.\r\nUS consumers probably saw slightly faster inflation in May, notably for merchandise, as companies gradually pass along higher import du\u2026 [+4 chars]"
+    },
+    {
+        "source": {
             "id": null,
             "name": "The Official Website of the Ultimate Fighting Championship"
         },
@@ -76,19 +141,6 @@
         "urlToImage": "https://thumbnails.texastribune.org/p5ypmIftaaUnRL19g-WrL5IezkE=/1200x630/filters:quality(95):focal(0x0:3984x2380)/static.texastribune.org/media/files/420c8389490708b3951e6b4ffd0869a5/Jones%20Watch%20Party%20SA%20Report.jpg",
         "publishedAt": "2025-06-08T05:29:46Z",
         "content": "Audio recording is automated for accessibility. Humans wrote and edited the story. See our AI policy, and give us feedback.\r\nSign up for The Brief, The Texas Tribunes daily newsletter that keeps read\u2026 [+9553 chars]"
-    },
-    {
-        "source": {
-            "id": null,
-            "name": "BBC News"
-        },
-        "author": null,
-        "title": "Israel is accused of the gravest war crimes in Gaza - BBC",
-        "description": "Distinguished lawyers, senior humanitarians and diplomats tell Jeremy Bowen why they are increasingly concerned about the catastrophe inside Gaza",
-        "url": "https://www.bbc.com/news/articles/c0r1xl5wgnko",
-        "urlToImage": "https://ichef.bbci.co.uk/news/1024/branded_news/7ce2/live/2b299000-413d-11f0-bace-e1270fc31f5e.png",
-        "publishedAt": "2025-06-08T04:31:59Z",
-        "content": "Even wars have rules. They don't stop soldiers killing each other but they're intended to make sure that civilians caught up in the fighting are treated humanely and protected from as much danger as \u2026 [+29211 chars]"
     },
     {
         "source": {
@@ -132,6 +184,19 @@
     {
         "source": {
             "id": null,
+            "name": "cleveland.com"
+        },
+        "author": "Today in Ohio",
+        "title": "Trump\u2019s war on science hits home: NASA Glenn Research Center faces \u201cextinction level\u201d cuts - Cleveland.com",
+        "description": "Northeast Ohio's premier scientific institution could lose 40 percent of its workforce under Trump's proposed NASA cuts, part of what Today in Ohio  calls Trump\u2019s systematic attack on science, education and research",
+        "url": "https://www.cleveland.com/news/2025/06/trumps-war-on-science-hits-home-nasa-glenn-research-center-faces-extinction-level-cuts.html",
+        "urlToImage": "https://www.cleveland.com/resizer/v2/NN5X3AAVGRCXRAHMQIU3HTHKHQ.jpg?auth=53974084921f704bd4c9109ee3d200c0a310900a3f37574fd79861a946c91f51&width=1280&quality=90",
+        "publishedAt": "2025-06-08T02:10:00Z",
+        "content": "The NASA Glenn Research Center, long considered the crown jewel of Northeast Ohios scientific community, faces a potentially devastating future under Donald Trumps proposed budget cuts.\r\nIn what Toda\u2026 [+3686 chars]"
+    },
+    {
+        "source": {
+            "id": null,
             "name": "BBC News"
         },
         "author": null,
@@ -145,19 +210,6 @@
     {
         "source": {
             "id": null,
-            "name": "WTOP"
-        },
-        "author": "WTOP Staff",
-        "title": "Man shot, 2 others stabbed in Dupont Circle - WTOP",
-        "description": "A man was shot and two others were reportingly stabbed after an incident in the area of Dupont Circle in Northwest D.C. Saturday night.",
-        "url": "https://wtop.com/dc/2025/06/man-shot-2-others-stabbed-in-dupont-circle/",
-        "urlToImage": "https://wtop.com/wp-content/uploads/2022/10/012918_dc_police-1-e1587783223169-1.jpg",
-        "publishedAt": "2025-06-08T00:35:29Z",
-        "content": "A man was shot and two others stabbed after an incident in Northwest D.C. Saturday night.\r\nJust after 7 p.m., there was a fight between a group of teens at Dupont Circle Park, police said. Two of tho\u2026 [+941 chars]"
-    },
-    {
-        "source": {
-            "id": null,
             "name": "Deadline"
         },
         "author": "Dominic Patten",
@@ -167,32 +219,6 @@
         "urlToImage": "https://deadline.com/wp-content/uploads/2025/04/diddy.jpg?w=1024",
         "publishedAt": "2025-06-08T00:29:00Z",
         "content": "For the second time in just over a week, Sean \u201cDiddy\u201d Combs wants the judge in his sex-trafficking case to declare a mistrial and kick the whole sordid matter to the curb. \r\nCiting \u201cprosecutorial mis\u2026 [+5237 chars]"
-    },
-    {
-        "source": {
-            "id": null,
-            "name": "Heat.com"
-        },
-        "author": "Shaun Powell",
-        "title": "A closer look at the striking metamorphosis of Tyrese Haliburton - NBA",
-        "description": "Indiana's dynamic point guard is carving out an entirely new reputation with his impressive play during these playoffs.",
-        "url": "https://www.nba.com/news/haliburton-metamorphosis",
-        "urlToImage": "https://cdn.nba.com/manage/2025/06/haliburton-iso-060725.jpg",
-        "publishedAt": "2025-06-08T00:15:33Z",
-        "content": "Get an All-Access pass as Tyrese Haliburton comes up huge again and Indiana takes a 1-0 series lead in the 2025 NBA Finals.\r\nOKLAHOMA CITY \u00a0The last time he played for a world title, Tyrese Haliburto\u2026 [+9263 chars]"
-    },
-    {
-        "source": {
-            "id": null,
-            "name": "The Mercury News"
-        },
-        "author": "Jon Wilner",
-        "title": "House vs. NCAA settlement: Gonzaga, Big East and billable hours the biggest winners (fans, bloat, Olympic sports among the losers) - The Mercury News",
-        "description": "Schools that don\u2019t need to feed the football beast can plow their cash into acquiring the best basketball rosters possible.",
-        "url": "https://www.mercurynews.com/2025/06/07/house-vs-ncaa-settlement-gonzaga-big-east-and-billable-hours-the-biggest-winners-fans-bloat-olympic-sports-among-the-losers/",
-        "urlToImage": "https://www.mercurynews.com/wp-content/uploads/2022/03/BNG-L-NCAA-0325-09.jpg?w=1024&h=683",
-        "publishedAt": "2025-06-07T23:39:52Z",
-        "content": "There was no immediate reaction from Gonzaga following court approval of the landmark House vs. NCAA lawsuit settlement on Friday evening.\r\nNo statement on the Bulldogs\u2019 website. Nothing from athleti\u2026 [+7034 chars]"
     },
     {
         "source": {
@@ -213,19 +239,6 @@
             "name": "BBC News"
         },
         "author": null,
-        "title": "Trump-Musk row fuels 'biggest crisis ever' at Nasa - BBC",
-        "description": "The space agency has published its budget request to Congress which would see funding for science projects cut by nearly a half.",
-        "url": "https://www.bbc.com/news/articles/c87jq0djw00o",
-        "urlToImage": "https://ichef.bbci.co.uk/news/1024/branded_news/2ce9/live/dd7579c0-43c4-11f0-835b-310c7b938e84.jpg",
-        "publishedAt": "2025-06-07T23:29:56Z",
-        "content": "Pallab Ghosh\r\nThe heart-shape on Pluto was captured by a spacecraft that will be turned off mid-mission if Nasa cuts are approved\r\nThe row between Donald Trump and Elon Musk over a major spending bil\u2026 [+7017 chars]"
-    },
-    {
-        "source": {
-            "id": null,
-            "name": "BBC News"
-        },
-        "author": null,
         "title": "Doctors use poo pills to flush out dangerous superbugs - BBC",
         "description": "Can a dose of good bacteria clear superbugs from their hiding place in the bowels?",
         "url": "https://www.bbc.com/news/articles/clyge290l4xo",
@@ -235,29 +248,42 @@
     },
     {
         "source": {
-            "id": null,
-            "name": "Local3news.com"
+            "id": "nbc-news",
+            "name": "NBC News"
         },
-        "author": "Emma Karnes",
-        "title": "Multiple wires and trees down across the TN Valley following evening destructive severe weather - Local 3 News",
-        "description": "Email storm damage photos to weather@local3news.com and be sure to download Local 3's Weather App to stay updated.",
-        "url": "https://www.local3news.com/local-news/multiple-wires-and-trees-down-across-the-tn-valley-following-evening-destructive-severe-weather/article_dd69db0e-d87c-41d2-985e-d23bb6222a4a.html",
-        "urlToImage": "https://bloximages.newyork1.vip.townnews.com/local3news.com/content/tncms/assets/v3/editorial/d/d6/dd69db0e-d87c-41d2-985e-d23bb6222a4a/6844cb305ceb1.preview.png?crop=673%2C353%2C1%2C249",
-        "publishedAt": "2025-06-07T22:59:00Z",
-        "content": null
+        "author": "Aria Bendix",
+        "title": "Celebrity breast cancer announcements highlight rising rates in young women - NBC News",
+        "description": "Several young celebrities have announced breast cancer diagnoses in the past year \u2014 a public reminder that rates are rising among women under 50 in the U.S.Pop singer Jessie J, 37, revealed this week on Instagram that she has early-stage breast cancer and pla\u2026",
+        "url": "https://www.nbcnews.com/health/womens-health/celebrity-breast-cancer-announcements-highlight-rising-rates-young-wom-rcna211287",
+        "urlToImage": "https://media-cldnry.s-nbcnews.com/image/upload/t_nbcnews-fp-1200-630,f_auto,q_auto:best/rockcms/2025-01/250114-mammogram-mn-1030-50adac.jpg",
+        "publishedAt": "2025-06-08T11:15:00Z",
+        "content": "Several young celebrities have announced breast cancer diagnoses in the past year a public reminder that rates are rising among women under 50 in the U.S.\r\nPop singer Jessie J, 37, revealed this week\u2026 [+6180 chars]"
     },
     {
         "source": {
             "id": null,
-            "name": "BBC News"
+            "name": "TribLIVE"
         },
-        "author": null,
-        "title": "Six killed by Israeli gunfire near Gaza aid site, Hamas officials say - BBC",
-        "description": "Dozens of Palestinians have been killed close to the controversial supply centre in Gaza.",
-        "url": "https://www.bbc.com/news/articles/cy5evz4xdklo",
-        "urlToImage": "https://ichef.bbci.co.uk/news/1024/branded_news/81b8/live/9940da10-43d3-11f0-9894-533658540f06.jpg",
-        "publishedAt": "2025-06-07T20:47:02Z",
-        "content": "Six Palestinians have been killed and several others wounded by Israeli gunfire in the latest deadly incident close to an aid distribution centre in southern Gaza, the Hamas-run Civil Defence agency \u2026 [+3244 chars]"
+        "author": "Tawnya Panizzi",
+        "title": "Demand for Mohs surgery skyrockets; treatment up to 99% effective for skin cancer - TribLIVE.com",
+        "description": "Erin Wheeler has always known she was at high risk for skin cancer. A kidney transplant, combined with fair skin from her Irish heritage, put skin cancer on her radar at age 10. Some three decades later, Wheeler, a senior career consultant at the University o\u2026",
+        "url": "https://triblive.com/local/valley-news-dispatch/demand-for-mohs-surgery-skyrockets-treatment-up-to-99-effective-for-skin-cancer/",
+        "urlToImage": "https://assets-varnish.triblive.com/2025/06/8558750_web1_vnd-mohsexpand104-060625.jpg",
+        "publishedAt": "2025-06-08T10:00:00Z",
+        "content": "Erin Wheeler has always known she was at high risk for skin cancer.\r\nA kidney transplant, combined with fair skin from her Irish heritage, put skin cancer on her radar at age 10.\r\nSome three decades \u2026 [+3162 chars]"
+    },
+    {
+        "source": {
+            "id": null,
+            "name": "Fitandwell.com"
+        },
+        "author": "Ciara McGinley",
+        "title": "I tried the 6-6-6 walking challenge for a week and my step count skyrocketed - Fit&Well",
+        "description": "But it\u2019s not something I\u2019ll continue doing\u2014here\u2019s why",
+        "url": "https://www.fitandwell.com/exercise/walking/6-6-6-walking-challenge",
+        "urlToImage": "https://cdn.mos.cms.futurecdn.net/nEinUEmpLpE7iq6QPqBcrF.jpg",
+        "publishedAt": "2025-06-08T04:00:00Z",
+        "content": "I\u2019ve been doing the viral 12-3-30 workout at least once a week for the past year, so when I came across the 6-6-6 walking challenge, the latest walking workout trending on TikTok, I hoped I had found\u2026 [+4169 chars]"
     },
     {
         "source": {
@@ -271,6 +297,19 @@
         "urlToImage": "https://static.toiimg.com/photo/121558400.cms",
         "publishedAt": "2025-06-08T03:51:46Z",
         "content": "And many women chalk them up to stress, poor sleep, or just getting older. But if even one or two of these signs are showing up consistently, its worth getting your kidneys checked with a simple bloo\u2026 [+562 chars]"
+    },
+    {
+        "source": {
+            "id": null,
+            "name": "Eatingwell.com"
+        },
+        "author": "https://www.facebook.com/EatingWell/",
+        "title": "The #1 Protein for Insulin Resistance, According to Health Experts - EatingWell",
+        "description": "Plant-based proteins\u2014especially tempeh\u2014can help reduce insulin resistance, improve blood sugar and support long-term metabolic health.",
+        "url": "https://www.eatingwell.com/best-protein-for-insulin-resistance-11745514",
+        "urlToImage": "https://www.eatingwell.com/thmb/ZYQL0w4vfcR2graXJQCf3lR0f5A=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/1-Protein-for-Insulin-Resistance-According-to-Health-Experts-8c7eaf53bfc743afb59f7b94feb6e546.jpg",
+        "publishedAt": "2025-06-08T03:00:00Z",
+        "content": "When it comes to protein foods, meat often gets placed on a pedestal. But if you're trying to reduce insulin resistance and support long-term metabolic health, plant proteins deserve to be right up t\u2026 [+5438 chars]"
     },
     {
         "source": {
@@ -444,45 +483,6 @@
     {
         "source": {
             "id": null,
-            "name": "Pethelpful.com"
-        },
-        "author": "PetHelpful",
-        "title": "Golden Retriever Teaches Baby How to Crawl and It\u2019s Giving Us All the Feels - PetHelpful",
-        "description": null,
-        "url": "https://pethelpful.com/pet-news/golden-retriever-teaches-baby-how-to-crawl",
-        "urlToImage": null,
-        "publishedAt": "2025-06-07T15:00:00Z",
-        "content": null
-    },
-    {
-        "source": {
-            "id": null,
-            "name": "PsyPost"
-        },
-        "author": "Eric W. Dolan",
-        "title": "Neuroimaging study suggests mindfulness meditation lowers sensory gating - PsyPost",
-        "description": "A new study finds that mindfulness meditators are more likely to report feeling a touch \u2014 even when none occurs \u2014 and that this sensitivity is linked to altered brain rhythms.",
-        "url": "https://www.psypost.org/neuroimaging-study-suggests-mindfulness-meditation-lowers-sensory-gating/",
-        "urlToImage": "https://www.psypost.org/wp-content/uploads/2025/06/meditating-woman.jpg",
-        "publishedAt": "2025-06-07T14:06:08Z",
-        "content": "People who regularly practice mindfulness meditation appear to experience bodily sensations more readily than others, but this heightened awareness may not actually make them more accurate. A new stu\u2026 [+7886 chars]"
-    },
-    {
-        "source": {
-            "id": null,
-            "name": "OregonLive"
-        },
-        "author": "The Associated Press",
-        "title": "Who can get a COVID-19 vaccine this fall? Here\u2019s what we know - OregonLive.com",
-        "description": "Conflicting recommendations from Trump administration health officials have left health experts, vaccine makers and insurers uncertain about what to advise.",
-        "url": "https://www.oregonlive.com/health/2025/06/who-can-get-a-covid-19-vaccine-this-fall-heres-what-we-know.html",
-        "urlToImage": "https://www.oregonlive.com/resizer/v2/XGUKHDEXJNDHBBUSK26D3AKLPM.jpg?auth=373a0f1c4d4c6dd46717daffbdd02fe069c3826e3d767a93570204f06111e49a&width=1280&quality=90",
-        "publishedAt": "2025-06-07T13:00:00Z",
-        "content": "Want a COVID-19 vaccination this fall? For many Americans, its not clear how easy it will be to get one and some doctors already see signs of trouble.\r\nHealth Secretary Robert F. Kennedy Jr., who was\u2026 [+4619 chars]"
-    },
-    {
-        "source": {
-            "id": null,
             "name": "SciTechDaily"
         },
         "author": null,
@@ -522,15 +522,15 @@
     {
         "source": {
             "id": null,
-            "name": "BBC News"
+            "name": "cleveland.com"
         },
-        "author": null,
-        "title": "Trump-Musk row fuels 'biggest crisis ever' at Nasa - BBC",
-        "description": "The space agency has published its budget request to Congress which would see funding for science projects cut by nearly a half.",
-        "url": "https://www.bbc.com/news/articles/c87jq0djw00o",
-        "urlToImage": "https://ichef.bbci.co.uk/news/1024/branded_news/2ce9/live/dd7579c0-43c4-11f0-835b-310c7b938e84.jpg",
-        "publishedAt": "2025-06-07T23:29:56Z",
-        "content": "Pallab Ghosh\r\nThe heart-shape on Pluto was captured by a spacecraft that will be turned off mid-mission if Nasa cuts are approved\r\nThe row between Donald Trump and Elon Musk over a major spending bil\u2026 [+7017 chars]"
+        "author": "Today in Ohio",
+        "title": "Trump\u2019s war on science hits home: NASA Glenn Research Center faces \u201cextinction level\u201d cuts - Cleveland.com",
+        "description": "Northeast Ohio's premier scientific institution could lose 40 percent of its workforce under Trump's proposed NASA cuts, part of what Today in Ohio  calls Trump\u2019s systematic attack on science, education and research",
+        "url": "https://www.cleveland.com/news/2025/06/trumps-war-on-science-hits-home-nasa-glenn-research-center-faces-extinction-level-cuts.html",
+        "urlToImage": "https://www.cleveland.com/resizer/v2/NN5X3AAVGRCXRAHMQIU3HTHKHQ.jpg?auth=53974084921f704bd4c9109ee3d200c0a310900a3f37574fd79861a946c91f51&width=1280&quality=90",
+        "publishedAt": "2025-06-08T02:10:00Z",
+        "content": "The NASA Glenn Research Center, long considered the crown jewel of Northeast Ohios scientific community, faces a potentially devastating future under Donald Trumps proposed budget cuts.\r\nIn what Toda\u2026 [+3686 chars]"
     },
     {
         "source": {
@@ -704,6 +704,19 @@
     {
         "source": {
             "id": null,
+            "name": "The Daily Galaxy --Great Discoveries Channel"
+        },
+        "author": null,
+        "title": "Hubble Just Snapped a Photo of a Galaxy Giving Birth to Stars\u2014And It\u2019s Breathtaking - The Daily Galaxy",
+        "description": "A dazzling new image from Hubble reveals a distant spiral galaxy brimming with newborn stars and glowing gas clouds.",
+        "url": "https://dailygalaxy.com/2025/06/hubble-galaxy-giving-birth-to-stars/",
+        "urlToImage": "https://dailygalaxy.com/wp-content/uploads/2025/06/Hubble-Just-Snapped-a-Photo-of-a-Galaxy-Giving-Birth-to-Stars\u2014And-Its-Breathtaking.jpg",
+        "publishedAt": "2025-06-07T14:00:00Z",
+        "content": "The NASA/ESA Hubble Space Telescope has once again delivered a visually stunning look into the heart of the universe, offering a detailed image of the barred spiral galaxy NGC 685, located approximat\u2026 [+3367 chars]"
+    },
+    {
+        "source": {
+            "id": null,
             "name": "404media.co"
         },
         "author": "Becky Ferreira",
@@ -729,19 +742,6 @@
     },
     {
         "source": {
-            "id": null,
-            "name": "The Daily Galaxy --Great Discoveries Channel"
-        },
-        "author": null,
-        "title": "Scientists Just Found an Ingredient for Life in a Newborn Planet System - The Daily Galaxy",
-        "description": "A rare molecule spotted in a young planet system could be a missing link in the story of life\u2019s origins. Scientists are now piecing together what this means for our own solar system.",
-        "url": "https://dailygalaxy.com/2025/06/scientists-ingredient-newborn-planet/",
-        "urlToImage": "https://dailygalaxy.com/wp-content/uploads/2025/06/Scientists-Just-Found-an-Ingredient-for-Life-in-a-Newborn-Planet-System.jpg",
-        "publishedAt": "2025-06-07T12:15:00Z",
-        "content": "Astronomers have uncovered a rare form of methanol, a basic organic molecule, in the swirling disk of gas and dust around a young starmarking a significant step forward in the search for how life-spa\u2026 [+3964 chars]"
-    },
-    {
-        "source": {
             "id": "the-verge",
             "name": "The Verge"
         },
@@ -756,15 +756,15 @@
     {
         "source": {
             "id": null,
-            "name": "Financial Times"
+            "name": "Motor1 "
         },
-        "author": "Michael Acton",
-        "title": "Apple\u2019s struggles to update Siri lead to investor concerns over AI strategy - Financial Times",
-        "description": "iPhone-maker hit by technological challenges that have led to delays to the full rollout of its \u2018Apple Intelligence\u2019 features",
-        "url": "https://www.ft.com/content/785aeb00-6784-4d64-a706-0cb44288e6be",
-        "urlToImage": "https://www.ft.com/__origami/service/image/v2/images/raw/https%3A%2F%2Fd1e00ek4ebabms.cloudfront.net%2Fproduction%2F1fd38e60-2de3-476f-918f-666481d1f552.jpg?source=next-barrier-page",
-        "publishedAt": "2025-06-08T04:00:01Z",
-        "content": "Complete digital access to quality analysis and expert insights, complemented with our award-winning Weekend Print edition.\r\n<ul><li></li>Everything in Print<li></li>Weekday Print Edition<li></li>FT \u2026 [+202 chars]"
+        "author": "Anthony Alaniz",
+        "title": "The Mustang\u2019s New Appearance Pack Is a 1980s Fever Dream - Motor1.com",
+        "description": "Ford is launching a new appearance package for the 2026 Mustang that takes inspiration from the third-generation Fox Body. See how it looks here.",
+        "url": "https://www.motor1.com/news/761984/2026-ford-mustang-80s-fx-package/",
+        "urlToImage": "https://cdn.motor1.com/images/mgl/jl0k07/s1/2026-ford-mustang-fx-package.jpg",
+        "publishedAt": "2025-06-08T05:02:31Z",
+        "content": "Ford has found inspiration in its past for a new appearance package that launches with the 2026 Mustang. Its called the FX Pack, and it adds a handful of retro-inspired styling cues straight out of t\u2026 [+2207 chars]"
     },
     {
         "source": {
@@ -873,6 +873,19 @@
     {
         "source": {
             "id": null,
+            "name": "Forbes"
+        },
+        "author": "Ewan Spence",
+        "title": "Apple Prepares To Cancel The Classic MacBook Pro - Forbes",
+        "description": "As Tim Cook prepares to open the Worldwide Developer Conference next week, some MacBook Pro owners should get ready for disappointment.",
+        "url": "https://www.forbes.com/sites/ewanspence/2025/06/07/apple-macbook-pro-macbook-air-intel-apple-silicon-macos-tahoe-support/",
+        "urlToImage": "https://imageio.forbes.com/specials-images/imageserve/64a03b72077ae0326b09d953/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds",
+        "publishedAt": "2025-06-07T18:15:37Z",
+        "content": "New MacBook Pro laptops are displayed during Apple's Worldwide Developers Conference 2023. (Photo by ... More JOSH EDELSON/AFP via Getty Images)\r\nAFP via Getty Images\r\nAs Tim Cook prepares to open th\u2026 [+3351 chars]"
+    },
+    {
+        "source": {
+            "id": null,
             "name": "Eurogamer.net"
         },
         "author": "Vikki Blake",
@@ -938,19 +951,6 @@
     {
         "source": {
             "id": null,
-            "name": "Videocardz.com"
-        },
-        "author": null,
-        "title": "AMD once again first to top GPU clock charts with RX 9060 XT delivering 3.1 GHz - VideoCardz.com",
-        "description": "AMD leads GPU clock race again, RX 9060 XT breaks another barrier We may argue whether this is a proper comparison. After all, companies like NVIDIA, AMD, and Intel have introduced various descriptions for their clock states, such as base, game, peak, boost, \u2026",
-        "url": "https://videocardz.com/newz/amd-once-again-first-to-top-gpu-clock-charts-with-rx-9060-xt-delivering-3-1-ghz",
-        "urlToImage": "https://cdn.videocardz.com/1/2025/06/RADEON-RX-9060XT-HD7970-HERO.jpg",
-        "publishedAt": "2025-06-07T13:11:00Z",
-        "content": "We may argue whether this is a proper comparison. After all, companies like NVIDIA, AMD, and Intel have introduced various descriptions for their clock states, such as base, game, peak, boost, and ot\u2026 [+2032 chars]"
-    },
-    {
-        "source": {
-            "id": null,
             "name": "MacRumors"
         },
         "author": "MacRumors Staff",
@@ -960,31 +960,5 @@
         "urlToImage": "https://images.macrumors.com/t/JKKks70tDw9jI1sTjLBKHpJM5QE=/1600x/article-new/2025/06/top-stories-2025-06-07.jpg",
         "publishedAt": "2025-06-07T13:00:00Z",
         "content": "Apple's big week is almost here, with WWDC 2025 kicking off on Monday with what we're expecting to be a jam-packed look at the company's software platforms, including some redesigns and rebranding.\r\n\u2026 [+4333 chars]"
-    },
-    {
-        "source": {
-            "id": null,
-            "name": "MovieWeb"
-        },
-        "author": "Anthony Lund",
-        "title": "Why Newest James Bond Actor Has Not Officially Been Announced - Despite Everyone \"Knowing\" Who It Is - MovieWeb",
-        "description": "While the world awaits the next big screen Bond, why has it not been confirmed who plays him in his new video game outing?",
-        "url": "https://movieweb.com/james-bond-007-first-light-actor-not-confirmed-reason-action-spy/",
-        "urlToImage": "https://static1.moviewebimages.com/wordpress/wp-content/uploads/2025/03/unnamed.jpg",
-        "publishedAt": "2025-06-07T13:00:00Z",
-        "content": "Talk of who will or wont be taking on the role of James Bond has been a constant presence on social media in the last several months, but currently there is still no sign of anyone being cast as Dani\u2026 [+2700 chars]"
-    },
-    {
-        "source": {
-            "id": "wired",
-            "name": "Wired"
-        },
-        "author": "Brad Bourque",
-        "title": "Everything You Need to Know About MicroSD Express - WIRED",
-        "description": "What is the latest MicroSD iteration, and why does your Nintendo Switch need it?",
-        "url": "https://www.wired.com/story/what-is-microsd-express/",
-        "urlToImage": "https://media.wired.com/photos/6843884e705692be4f3d1d62/191:100/w_1280,c_limit/MicroSD%20Express.png",
-        "publishedAt": "2025-06-07T12:03:00Z",
-        "content": "I just got my Nintendo Switch 2, and my internal storage is already filling up with all my old games and saves! If you're in the same boat, you may have also noticed you can't just jam in the SD card\u2026 [+2047 chars]"
     }
 ]

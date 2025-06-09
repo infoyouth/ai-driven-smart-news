@@ -21,24 +21,33 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: 📦 Install Dependencies
+      - name: 📦 Install Poetry
         run: |
-          echo "🔄 Installing dependencies..."
+          echo "🔄 Installing Poetry..."
           python -m pip install --upgrade pip
           pip install poetry
-          pip install colorlog
+
+      - name: 📦 Install Dependencies and Project
+        run: |
+          echo "🔄 Installing dependencies and project..."
           poetry install
 
-      - name: 🧪 Verify Environment
+      - name: 🧪 Debug Python Environment
         run: |
-          echo "🔍 Verifying installed dependencies..."
-          poetry show
+          echo "Python executable: $(which python)"
+          echo "Python version: $(python --version)"
+          echo "Installed packages:"
+          python -m pip list
+
+      - name: 🧪 Set PYTHONPATH
+        run: |
+          export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+          echo "PYTHONPATH set to: $PYTHONPATH"
 
       - name: 📝 Run Main Script
         run: |
-          echo "🚀 Running main.py..."
-          python main.py
+          echo "🚀 Running main.py within Poetry environment..."
+          poetry run python main.py
 
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"
-        

@@ -58,7 +58,10 @@ class GeminiNewsProcessor:
         self.input_file = input_file
         self.output_file = output_file
         self.gemini_api_key = gemini_api_key
-        self.gemini_endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key={self.gemini_api_key}"
+        self.gemini_endpoint = (
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"gemini-2.0-flash-exp:generateContent?key={self.gemini_api_key}"
+        )
         self.days = days
 
     async def load_data(self) -> list:
@@ -81,7 +84,9 @@ class GeminiNewsProcessor:
             logger.error(f"Input file {self.input_file} not found.")
             raise
         except json.JSONDecodeError:
-            logger.error(f"Error decoding JSON from {self.input_file}.")
+            logger.error(
+                f"Error decoding JSON from {self.input_file}."
+            )
             raise
 
     def filter_recent_articles(self, articles: list) -> list:
@@ -100,10 +105,9 @@ class GeminiNewsProcessor:
             {"title": article["title"], "url": article["url"]}
             for article in articles
             if "publishedAt" in article
-            and datetime.strptime(article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ").replace(
-                tzinfo=timezone.utc
-            )
-            > time_threshold
+            and datetime.strptime(
+                article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ"
+            ).replace(tzinfo=timezone.utc) > time_threshold
         ]
         logger.info(
             f"Found {len(recent_articles)} articles published in the last {self.days} days."
@@ -128,12 +132,11 @@ class GeminiNewsProcessor:
             json.JSONDecodeError: If the response from Gemini cannot be parsed.
         """
         # Prepare prompt text
-        prompt_text = """
-        Analyze the provided list of titles and URLs and identify the top 10 most relevant ones for engineering students and recent graduates, focusing on their career development, educational growth, and future opportunities. Consider factors such as industry trends, employability, skills advancement, and emerging technologies in engineering.
-
-        Present your selection in the following JSON format:
-        [{"title": "Short and Attractive Title", "url": "Original URL"}]
-        """
+        prompt_text = (
+            "Analyze the provided list of titles and URLs and select the top 10 most relevant for engineering students and recent graduates, focusing on their career development, educational growth, and future opportunities. "
+            "Only reply with your selection as a JSON array, with no explanation or additional text. "
+            'Format: [{"title": "Short and Attractive Title", "url": "Original URL"}]'
+        )
         prompt_text += "\n".join(
             [
                 f"Title: {article['title']}\nURL: {article['url']}"
@@ -166,7 +169,9 @@ class GeminiNewsProcessor:
 
                 try:
                     # Clean up the raw text using regex to remove unexpected characters
-                    cleaned_text = re.sub(r"```json|```", "", raw_text).strip()
+                    cleaned_text = re.sub(
+                        r"```json|```", "", raw_text
+                    ).strip()
                     parsed_data = json.loads(cleaned_text)
                     logger.info(
                         f"Successfully parsed {len(parsed_data)} articles from Gemini response."

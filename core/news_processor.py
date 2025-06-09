@@ -14,7 +14,8 @@ Modules:
 
 Usage:
     Set the GEMINI_API_KEY environment variable with your API key.
-    Run the script to process articles from the input file and save filtered results to the output file.
+    Run the script to process articles from the input file and save filtered results
+    to the output file.
 """
 import os
 import json
@@ -30,17 +31,19 @@ logger = setup_logger()
 
 class GeminiNewsProcessor:
     """
-    A class to process news articles and analyze their relevance for engineering students and recent graduates.
+    A class to process news articles and analyze their relevance for engineering
+    students and recent graduates.
 
-    This class filters articles based on their publication date, sends them to the Gemini AI API for analysis,
-    and saves the filtered results in a JSON file.
+    This class filters articles based on their publication date, sends them to the
+    Gemini AI API for analysis, and saves the filtered results in a JSON file.
 
     Attributes:
         input_file (str): Path to the input JSON file containing articles.
         output_file (str): Path to the output JSON file for saving filtered articles.
         gemini_api_key (str): API key for accessing the Gemini AI API.
         gemini_endpoint (str): Endpoint URL for the Gemini AI API.
-        days (int): Number of days to filter articles based on their publication date.
+        days (int): Number of days to filter articles based on their publication
+            date.
     """
 
     def __init__(
@@ -51,9 +54,11 @@ class GeminiNewsProcessor:
 
         Args:
             input_file (str): Path to the input JSON file containing articles.
-            output_file (str): Path to the output JSON file for saving filtered articles.
+            output_file (str): Path to the output JSON file for saving filtered
+                articles.
             gemini_api_key (str): API key for accessing the Gemini AI API.
-            days (int): Number of days to filter articles based on their publication date. Default is 1.
+            days (int): Number of days to filter articles based on their
+                publication date. Default is 1.
         """
         self.input_file = input_file
         self.output_file = output_file
@@ -84,9 +89,7 @@ class GeminiNewsProcessor:
             logger.error(f"Input file {self.input_file} not found.")
             raise
         except json.JSONDecodeError:
-            logger.error(
-                f"Error decoding JSON from {self.input_file}."
-            )
+            logger.error(f"Error decoding JSON from {self.input_file}.")
             raise
 
     def filter_recent_articles(self, articles: list) -> list:
@@ -105,12 +108,14 @@ class GeminiNewsProcessor:
             {"title": article["title"], "url": article["url"]}
             for article in articles
             if "publishedAt" in article
-            and datetime.strptime(
-                article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ"
-            ).replace(tzinfo=timezone.utc) > time_threshold
+            and datetime.strptime(article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ").replace(
+                tzinfo=timezone.utc
+            )
+            > time_threshold
         ]
         logger.info(
-            f"Found {len(recent_articles)} articles published in the last {self.days} days."
+            f"Found {len(recent_articles)} articles published in the last "
+            f"{self.days} days."
         )
         return recent_articles
 
@@ -133,8 +138,11 @@ class GeminiNewsProcessor:
         """
         # Prepare prompt text
         prompt_text = (
-            "Analyze the provided list of titles and URLs and select the top 10 most relevant for engineering students and recent graduates, focusing on their career development, educational growth, and future opportunities. "
-            "Only reply with your selection as a JSON array, with no explanation or additional text. "
+            "Analyze the provided list of titles and URLs and select the top 10 most "
+            "relevant for engineering students and recent graduates, focusing on their "
+            "career development, educational growth, and future opportunities. "
+            "Only reply with your selection as a JSON array, with no explanation or "
+            "additional text. "
             'Format: [{"title": "Short and Attractive Title", "url": "Original URL"}]'
         )
         prompt_text += "\n".join(
@@ -169,12 +177,11 @@ class GeminiNewsProcessor:
 
                 try:
                     # Clean up the raw text using regex to remove unexpected characters
-                    cleaned_text = re.sub(
-                        r"```json|```", "", raw_text
-                    ).strip()
+                    cleaned_text = re.sub(r"```json|```", "", raw_text).strip()
                     parsed_data = json.loads(cleaned_text)
                     logger.info(
-                        f"Successfully parsed {len(parsed_data)} articles from Gemini response."
+                        f"Successfully parsed {len(parsed_data)} articles from "
+                        "Gemini response."
                     )
                     return parsed_data
                 except json.JSONDecodeError as e:
@@ -201,7 +208,10 @@ class GeminiNewsProcessor:
             )
             return [
                 {
-                    "message": "No articles found published within the last {self.days} days."
+                    "message": (
+                        f"No articles found published within the last "
+                        f"{self.days} days."
+                    )
                 }
             ]
 
@@ -256,12 +266,13 @@ async def main():
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     if not GEMINI_API_KEY:
         logger.critical(
-            "Gemini API key not found. Please set the GEMINI_API_KEY environment variable."
+            "Gemini API key not found. Please set the GEMINI_API_KEY environment "
+            "variable."
         )
         raise ValueError(
-            "Gemini API key not found. Please set the GEMINI_API_KEY environment variable."
+            "Gemini API key not found. Please set the GEMINI_API_KEY environment "
+            "variable."
         )
-
     processor = GeminiNewsProcessor(
         "latest_news.json", "filtered_news.json", GEMINI_API_KEY, days=2
     )
@@ -270,7 +281,8 @@ async def main():
         filtered_articles = await processor.process_articles(articles)
         await processor.save_data(filtered_articles)
         logger.info(
-            f"Processing completed successfully. Filtered {len(filtered_articles)} articles."
+            f"Processing completed successfully. Filtered "
+            f"{len(filtered_articles)} articles."
         )
     except Exception as e:
         logger.critical(f"An unexpected error occurred: {e}")

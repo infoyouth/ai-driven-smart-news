@@ -22,6 +22,14 @@ jobs:
         with:
           python-version: "3.9"
 
+      - name: 🗄️ Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
       - name: 📦 Install Poetry
         run: |
           echo "🔄 Installing Poetry..."

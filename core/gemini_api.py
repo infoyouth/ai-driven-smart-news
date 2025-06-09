@@ -26,8 +26,7 @@ class GeminiApiClient:
         self.api_key = api_key
         self.endpoint = (
             "https://generativelanguage.googleapis.com/v1beta/models/"
-            "gemini-2.0-flash-exp:generateContent?key="
-            + self.api_key
+            "gemini-2.0-flash-exp:generateContent?key=" + self.api_key
         )
 
     async def analyze_titles(
@@ -113,6 +112,7 @@ if __name__ == "__main__":
     if not api_key:
         print("Please set the GEMINI_API_KEY environment variable.")
     else:
+
         async def test():
             async with aiohttp.ClientSession() as session:
                 client = GeminiApiClient(api_key)
@@ -120,4 +120,5 @@ if __name__ == "__main__":
                 articles = [{"title": "Sample", "url": "http://example.com"}]
                 result = await client.analyze_titles(session, articles)
                 print("Result:", result)
+
         asyncio.run(test())

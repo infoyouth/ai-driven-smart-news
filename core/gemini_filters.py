@@ -40,9 +40,9 @@ class ArticleFilter:
             {"title": article["title"], "url": article["url"]}
             for article in articles
             if "publishedAt" in article
-            and datetime.strptime(
-                article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ"
-            ).replace(tzinfo=timezone.utc)
+            and datetime.strptime(article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ").replace(
+                tzinfo=timezone.utc
+            )
             > time_threshold
         ]
         logger.info(
@@ -65,9 +65,9 @@ if __name__ == "__main__":
         {
             "title": "Test 2",
             "url": "http://b.com",
-            "publishedAt": (
-                datetime.now(timezone.utc) - timedelta(days=5)
-            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "publishedAt": (datetime.now(timezone.utc) - timedelta(days=5)).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
+            ),
         },
     ]
     filtered = ArticleFilter.filter_recent_articles(articles, days=2)

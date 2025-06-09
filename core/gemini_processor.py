@@ -56,9 +56,7 @@ class GeminiNewsProcessor:
         try:
             with open(self.input_file, "r") as file:
                 articles = json.load(file)
-                logger.info(
-                    f"Loaded {len(articles)} articles from {self.input_file}."
-                )
+                logger.info(f"Loaded {len(articles)} articles from {self.input_file}.")
                 return articles
         except FileNotFoundError:
             logger.error(f"Input file {self.input_file} not found.")
@@ -96,9 +94,7 @@ class GeminiNewsProcessor:
             top_titles = await self.gemini_client.analyze_titles(
                 session, recent_articles
             )
-            logger.info(
-                f"Filtered {len(top_titles)} articles."
-            )
+            logger.info(f"Filtered {len(top_titles)} articles.")
             return top_titles
 
     async def save_data(self, articles: List[Dict[str, Any]]) -> None:
@@ -150,4 +146,5 @@ async def main() -> None:
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())

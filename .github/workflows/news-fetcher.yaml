@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # Set the API key from GitHub Secrets
+      NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }} # Set the NewsAPI key from GitHub Secrets
     steps:
       - name: 🚗 Checkout Code
         uses: actions/checkout@v4

@@ -5,9 +5,9 @@ on:
   schedule: # Run the workflow on a schedule
     - cron: "0 3 * * *" # Runs daily at 3 AM UTC
 
-  pull_request: # Trigger on pull request events
-    branches:
-      - main
+  #pull_request: # Trigger on pull request events
+  #  branches:
+  #    - main
 
 jobs:
   run_main_script:
@@ -61,8 +61,8 @@ jobs:
         run: |
           set -e
           echo "🚀 Running main.py within Poetry environment..."
-          #poetry run python main.py
-          #echo "💰 [Walmart & Amazon Exploring Stablecoins](https://www.wsj.com/finance/banking/walmart-amazon-stablecoin-07de2fdd)" > output.txt
+          poetry run python main.py
+          echo "💰 [Walmart & Amazon Exploring Stablecoins](https://www.wsj.com/finance/banking/walmart-amazon-stablecoin-07de2fdd)" > output.txt
 
       - name: ✅ Validate Output Files
         id: validate-output

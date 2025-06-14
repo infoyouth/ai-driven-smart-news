@@ -70,13 +70,16 @@ jobs:
             echo "file_exists=true" >> $GITHUB_ENV
           fi
 
-      - name: 🧪 Read Output File Content
+      - name: 🧪 Read Output File Content (with random delimiter)
         id: read-output
         shell: bash
         run: |
-          echo 'DISCORD_CONTENT<<EOF' >> $GITHUB_ENV
-          cat ./output.txt >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          DELIM="END_OF_DISCORD_CONTENT_$(uuidgen)"
+          {
+            echo "DISCORD_CONTENT<<$DELIM"
+            cat ./output.txt
+            echo "$DELIM"
+          } >> $GITHUB_ENV
 
       - name: 📢 Notify Discord
         if: ${{ env.file_exists == 'true' }}

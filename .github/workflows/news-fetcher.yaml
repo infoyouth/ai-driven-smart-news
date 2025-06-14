@@ -5,6 +5,10 @@ on:
   schedule: # Run the workflow on a schedule
     - cron: "0 3 * * *" # Runs daily at 3 AM UTC
 
+  pull_request: # Trigger on pull request events
+    branches:
+      - main
+
 jobs:
   run_main_script:
     runs-on: ubuntu-24.04

@@ -74,10 +74,11 @@ jobs:
             echo "file_exists=true" >> $GITHUB_ENV
           fi
 
-      - name: 🧪 Read Output File Content (robust, no extra line)
+      - name: 🧪 Read Output File Content
         id: read-output
         shell: bash
         run: |
+          cat output.txt
           DELIM="END_OF_DISCORD_CONTENT_$(uuidgen)"
           {
             echo "DISCORD_CONTENT<<$DELIM"

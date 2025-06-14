@@ -72,8 +72,9 @@ jobs:
       - name: 🧪 Read Output File Content
         id: read-output
         run: |
-          content=$(cat output.txt | sed 's/"/\\"/g' | sed 's/$/\\n/g')
-          echo "CONTENT=$content" >> $GITHUB_ENV
+          cat output.txt || echo "Output file is empty or does not exist."
+          content=$(cat output.txt)
+          echo "content=$content" >> $GITHUB_OUTPUT
 
       - name: 📢 Notify Discord
         if: ${{ env.file_exists == 'true' }}
@@ -81,7 +82,7 @@ jobs:
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           title: "AI-Driven Breaking 🚀"
-          description: ${{ env.CONTENT }}
+          description: ${{ steps.read-output.outputs.content }}
           username: "infoyouth"
           color: "#00FF00"
 

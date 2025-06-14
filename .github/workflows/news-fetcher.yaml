@@ -57,7 +57,8 @@ jobs:
         run: |
           set -e
           echo "🚀 Running main.py within Poetry environment..."
-          poetry run python main.py
+          # poetry run python main.py
+          echo "💰 [Walmart & Amazon Exploring Stablecoins](https://www.wsj.com/finance/banking/walmart-amazon-stablecoin-07de2fdd)" > output.txt
 
       - name: ✅ Validate Output Files
         id: validate-output
@@ -69,10 +70,10 @@ jobs:
             echo "file_exists=true" >> $GITHUB_ENV
           fi
 
-      - name: 🧪 Read Output File Content
+      - name: 🧪 Read and Encode Output File Content
         id: read-output
         run: |
-          content=$(cat output.txt | sed 's/%/%25/g' | sed 's/\n/%0A/g' | sed 's/\r/%0D/g')
+          content=$(cat output.txt | base64)
           echo "content=$content" >> $GITHUB_OUTPUT
 
       - name: 📢 Notify Discord

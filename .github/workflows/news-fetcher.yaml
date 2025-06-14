@@ -74,12 +74,9 @@ jobs:
         id: read-output
         shell: bash
         run: |
-          discord=$(cat ./output.txt)
-          echo "$discord"
-          echo "content=$discord" >> $GITHUB_OUTPUT
-          #echo "content<<END_OF_FILE" >> $GITHUB_OUTPUT
-          #cat ./output.txt >> $GITHUB_OUTPUT
-          #echo "END_OF_FILE" >> $GITHUB_OUTPUT
+          echo 'DISCORD_CONTENT<<EOF' >> $GITHUB_ENV
+          cat ./output.txt >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
 
       - name: 📢 Notify Discord
         if: ${{ env.file_exists == 'true' }}
@@ -87,10 +84,9 @@ jobs:
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           title: "AI-Driven Breaking 🚀"
-          description: ${{ steps.read-output.outputs.content }}
+          description: ${{ env.DISCORD_CONTENT }}
           include_image: 'true'
           username: 'Youth Innovations'
           custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
-
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

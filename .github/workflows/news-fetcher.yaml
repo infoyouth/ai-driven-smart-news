@@ -74,9 +74,12 @@ jobs:
         id: read-output
         shell: bash
         run: |
-          echo "content<<END_OF_FILE" >> $GITHUB_OUTPUT
-          cat ./output.txt >> $GITHUB_OUTPUT
-          echo "END_OF_FILE" >> $GITHUB_OUTPUT
+          discord=$(cat ./output.txt)
+          echo "$discord"
+          echo "content=$discord" >> $GITHUB_OUTPUT
+          #echo "content<<END_OF_FILE" >> $GITHUB_OUTPUT
+          #cat ./output.txt >> $GITHUB_OUTPUT
+          #echo "END_OF_FILE" >> $GITHUB_OUTPUT
 
       - name: 📢 Notify Discord
         if: ${{ env.file_exists == 'true' }}

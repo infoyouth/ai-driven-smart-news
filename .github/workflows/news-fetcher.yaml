@@ -72,7 +72,7 @@ jobs:
       - name: 🧪 Read Output File Content
         id: read-output
         run: |
-          content=$(cat output.txt)
+          content=$(cat output.txt | sed 's/"/\\"/g' | sed 's/$/\\n/g')
           echo "CONTENT=$content" >> $GITHUB_ENV
 
       - name: 📢 Notify Discord

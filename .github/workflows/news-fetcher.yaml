@@ -90,7 +90,7 @@ jobs:
         uses: cabrera-evil/discord-notify-action@v1.0.1
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: "AI-Driven Breaking 🚀"
+          title: "AI-Driven Breaking News 🚀"
           description: ${{ env.DISCORD_CONTENT }}
           include_image: 'true'
           username: 'Youth Innovations'

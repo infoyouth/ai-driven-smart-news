@@ -60,10 +60,13 @@ jobs:
           poetry run python main.py
 
       - name: ✅ Validate Output Files
+        id: validate-output
         run: |
           if [ ! -f output.txt ] || [ ! -s output.txt ]; then
-            echo "Error: output.txt is missing or empty!"
+            echo "file_exists=false" >> $GITHUB_ENV
             exit 1
+          else
+            echo "file_exists=true" >> $GITHUB_ENV
           fi
 
       - name: 🧪 Debug Output File
@@ -72,14 +75,14 @@ jobs:
           cat output.txt || echo "output.txt not found!"
 
       - name: 📢 Notify Discord
-        if: ${{ always() && steps.validate-output.outputs.file_exists == 'true' }}
+        if: ${{ env.file_exists == 'true' }}
         uses: cabrera-evil/discord-notify-action@v1.0.1
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: "AI-Driven Breaking News 🚀"
+          title: "AI-Driven Smart News Update 🚀"
           description: |
             $(cat output.txt)
-          username: "infoyouth"
+          username: "News Bot"
           color: "#00FF00"
 
       - name: 🌍 Beautify Logs

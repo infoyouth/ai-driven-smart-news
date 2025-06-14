@@ -69,20 +69,20 @@ jobs:
             echo "file_exists=true" >> $GITHUB_ENV
           fi
 
-      - name: 🧪 Debug Output File
+      - name: 🧪 Read Output File Content
+        id: read-output
         run: |
-          echo "Contents of output.txt:"
-          cat output.txt || echo "output.txt not found!"
+          content=$(cat output.txt)
+          echo "CONTENT=$content" >> $GITHUB_ENV
 
       - name: 📢 Notify Discord
         if: ${{ env.file_exists == 'true' }}
         uses: cabrera-evil/discord-notify-action@v1.0.1
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: "AI-Driven Smart News Update 🚀"
-          description: |
-            $(cat output.txt)
-          username: "News Bot"
+          title: "AI-Driven Breaking 🚀"
+          description: ${{ env.CONTENT }}
+          username: "infoyouth"
           color: "#00FF00"
 
       - name: 🌍 Beautify Logs

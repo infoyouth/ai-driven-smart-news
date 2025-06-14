@@ -70,11 +70,13 @@ jobs:
             echo "file_exists=true" >> $GITHUB_ENV
           fi
 
-      - name: 🧪 Read and Encode Output File Content
+      - name: 🧪 Read Output File Content
         id: read-output
+        shell: bash
         run: |
-          content=$(cat output.txt | base64)
-          echo "content=$content" >> $GITHUB_OUTPUT
+          echo "content<<EOF" >> $GITHUB_OUTPUT
+          cat ./output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: 📢 Notify Discord
         if: ${{ env.file_exists == 'true' }}

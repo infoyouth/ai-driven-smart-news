@@ -55,8 +55,32 @@ jobs:
 
       - name: 📝 Run Main Script
         run: |
+          set -e
           echo "🚀 Running main.py within Poetry environment..."
           poetry run python main.py
+
+      - name: ✅ Validate Output Files
+        run: |
+          if [ ! -f output.txt ] || [ ! -s output.txt ]; then
+            echo "Error: output.txt is missing or empty!"
+            exit 1
+          fi
+
+      - name: 🧪 Debug Output File
+        run: |
+          echo "Contents of output.txt:"
+          cat output.txt || echo "output.txt not found!"
+
+      - name: 📢 Notify Discord
+        if: ${{ always() && steps.validate-output.outputs.file_exists == 'true' }}
+        uses: cabrera-evil/discord-notify-action@v1.0.1
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          title: "AI-Driven Breaking News 🚀"
+          description: |
+            $(cat output.txt)
+          username: "infoyouth"
+          color: "#00FF00"
 
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

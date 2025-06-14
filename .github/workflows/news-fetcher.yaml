@@ -62,7 +62,7 @@ jobs:
           set -e
           echo "🚀 Running main.py within Poetry environment..."
           poetry run python main.py
-          echo "💰 [Walmart & Amazon Exploring Stablecoins](https://www.wsj.com/finance/banking/walmart-amazon-stablecoin-07de2fdd)" > output.txt
+          #echo "💰 [Walmart & Amazon Exploring Stablecoins](https://www.wsj.com/finance/banking/walmart-amazon-stablecoin-07de2fdd)" > output.txt
 
       - name: ✅ Validate Output Files
         id: validate-output

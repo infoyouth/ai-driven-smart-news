@@ -70,14 +70,14 @@ jobs:
             echo "file_exists=true" >> $GITHUB_ENV
           fi
 
-      - name: 🧪 Read Output File Content (with random delimiter)
+      - name: 🧪 Read Output File Content (robust, no extra line)
         id: read-output
         shell: bash
         run: |
           DELIM="END_OF_DISCORD_CONTENT_$(uuidgen)"
           {
             echo "DISCORD_CONTENT<<$DELIM"
-            cat ./output.txt
+            printf "%s\n" "$(cat ./output.txt)"
             echo "$DELIM"
           } >> $GITHUB_ENV
 

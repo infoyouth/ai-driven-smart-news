@@ -74,6 +74,49 @@ class GeminiApiClient:
             logger.error(f"Request to Gemini API failed: {exc}")
             return []
 
+    async def enrich_articles(
+        self, session: aiohttp.ClientSession, articles: List[Dict[str, str]]
+    ) -> List[Dict[str, str]]:
+        """
+        Uses Gemini to assign a topic, emoji, and summary to each article.
+
+        Args:
+            session: The aiohttp session.
+            articles: List of articles with 'title' and 'url'.
+
+        Returns:
+            List of dicts with title, url, topic, emoji, and summary.
+        """
+        prompt = (
+            "For each news article below, do the following:\n"
+            "- Assign a topic from [Space, AI, Politics, Health, Science, Tech,\n"
+            "Other].- Suggest an appropriate emoji for that topic.\n"
+            "- Write a concise 1-sentence summary.\n"
+            "Reply as a JSON list, where each item is:\n"
+            '{"title": "...", "url": "...", "topic": "...",\n'
+            ' "emoji": "...", "summary": "..."}\n'
+        )
+        prompt += "\n".join([f'Title: {a["title"]}\nURL: {a["url"]}' for a in articles])
+
+        data = {"contents": [{"parts": [{"text": prompt}]}]}
+        headers = {"Content-Type": "application/json"}
+
+        try:
+            async with session.post(
+                self.endpoint, json=data, headers=headers
+            ) as response:
+                logger.debug(
+                    "Sent enrich prompt to Gemini API, "
+                    f"response status: {response.status}"
+                )
+                response.raise_for_status()
+                result = await response.json()
+                logger.debug(f"Response from Gemini API: {result}")
+                return self._parse_gemini_response(result)
+        except aiohttp.ClientError as exc:
+            logger.error(f"Request to Gemini API failed: {exc}")
+            return []
+
     @staticmethod
     def _parse_gemini_response(result: Dict[str, Any]) -> List[Dict[str, str]]:
         """

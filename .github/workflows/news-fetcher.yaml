@@ -57,8 +57,8 @@ jobs:
         run: |
           set -e
           echo "🚀 Running main.py within Poetry environment..."
-          # poetry run python main.py
-          echo "💰 [Walmart & Amazon Exploring Stablecoins](https://www.wsj.com/finance/banking/walmart-amazon-stablecoin-07de2fdd)" > output.txt
+          poetry run python main.py
+          # echo "💰 [Walmart & Amazon Exploring Stablecoins](https://www.wsj.com/finance/banking/walmart-amazon-stablecoin-07de2fdd)" > output.txt
 
       - name: ✅ Validate Output Files
         id: validate-output
@@ -85,8 +85,9 @@ jobs:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           title: "AI-Driven Breaking 🚀"
           description: ${{ steps.read-output.outputs.content }}
-          username: "infoyouth"
-          color: "#00FF00"
+          include_image: 'true'
+          username: 'Youth Innovations'
+          custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
 
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

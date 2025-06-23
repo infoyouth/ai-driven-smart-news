@@ -128,24 +128,32 @@ class GeminiApiClient:
             return []
 
     @staticmethod
-    def _extract_json_from_text(text: str) -> Any:
-        """
-        Extracts the first valid JSON array or object from a string, even if wrapped
-        with text, markdown, or code fences.
-        """
-        cleaned = re.sub(
-            r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE
-        )
-        array_match = re.search(r"(\[.*\])", cleaned, re.DOTALL)
-        if array_match:
-            json_str = array_match.group(1)
+    def _extract_json_from_text(text: str):
+    """
+    Extracts the first valid JSON array/object from a string,
+    even if wrapped with markdown or truncated.
+    """
+    # Remove code fences and leading/trailing whitespace
+    cleaned = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE)
+    # Find the first JSON array or object
+    array_match = re.search(r"(\[.*\])", cleaned, re.DOTALL)
+    if array_match:
+        json_str = array_match.group(1)
+    else:
+        obj_match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
+        if obj_match:
+            json_str = obj_match.group(1)
         else:
-            obj_match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
-            if obj_match:
-                json_str = obj_match.group(1)
-            else:
-                raise ValueError("No valid JSON array or object found in text.")
-        return json.loads(json_str)
+            raise ValueError("No valid JSON array or object found in text.")
+
+    # Try to parse the JSON, truncate if incomplete
+    # Try stepwise: longest prefix that parses as valid JSON
+    for i in range(len(json_str), 1, -1):
+        try:
+            return json.loads(json_str[:i])
+        except json.JSONDecodeError:
+            continue
+    raise ValueError("Failed to parse any valid JSON from text.")
 
     @classmethod
     def _parse_gemini_response(

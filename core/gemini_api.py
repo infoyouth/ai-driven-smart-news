@@ -30,7 +30,9 @@ class GeminiApiClient:
         )
 
     async def analyze_titles(
-        self, session: aiohttp.ClientSession, articles: List[Dict[str, str]]
+        self,
+        session: aiohttp.ClientSession,
+        articles: List[Dict[str, str]],
     ) -> List[Dict[str, str]]:
         """
         Analyzes article titles and URLs with the Gemini API.
@@ -48,7 +50,9 @@ class GeminiApiClient:
             "career development, educational growth, and future opportunities. "
             "Only reply with your selection as a JSON array, with no explanation or "
             "additional text. "
-            'Format: [{"title": "Short and Attractive Title", "url": "Original URL"}]'
+            'Format: [{"title": "Short and Attractive Title", "url": "Original URL"}]\n'
+            "Output only valid JSON. Do not add any extra text, comments, or markdown "
+            "code blocks.\n"
         )
         prompt_text += "\n".join(
             [
@@ -64,18 +68,20 @@ class GeminiApiClient:
                 self.endpoint, json=data, headers=headers
             ) as response:
                 logger.debug(
-                    f"Sent prompt to Gemini API, response status: {response.status}"
+                    "Sent prompt to Gemini API, response status: %s", response.status
                 )
                 response.raise_for_status()
                 result = await response.json()
-                logger.debug(f"Response from Gemini API: {result}")
+                logger.debug("Response from Gemini API: %s", result)
                 return self._parse_gemini_response(result)
         except aiohttp.ClientError as exc:
-            logger.error(f"Request to Gemini API failed: {exc}")
+            logger.error("Request to Gemini API failed: %s", exc)
             return []
 
     async def enrich_articles(
-        self, session: aiohttp.ClientSession, articles: List[Dict[str, str]]
+        self,
+        session: aiohttp.ClientSession,
+        articles: List[Dict[str, str]],
     ) -> List[Dict[str, str]]:
         """
         Uses Gemini to assign a topic, emoji, and summary to each article.
@@ -89,14 +95,18 @@ class GeminiApiClient:
         """
         prompt = (
             "For each news article below, do the following:\n"
-            "- Assign a topic from [Space, AI, Politics, Health, Science, Tech,\n"
-            "Other].- Suggest an appropriate emoji for that topic.\n"
+            "- Assign a topic from [Space, AI, Politics, Health, Science, Tech, Other].\n"
+            "- Suggest an appropriate emoji for that topic.\n"
             "- Write a concise 1-sentence summary.\n"
             "Reply as a JSON list, where each item is:\n"
-            '{"title": "...", "url": "...", "topic": "...",\n'
-            ' "emoji": "...", "summary": "..."}\n'
+            '{"title": "...", "url": "...", "topic": "...", "emoji": "...", '
+            '"summary": "..."}\n'
+            "Output only valid JSON. Do not add any extra text, comments, or markdown "
+            "code blocks.\n"
         )
-        prompt += "\n".join([f'Title: {a["title"]}\nURL: {a["url"]}' for a in articles])
+        prompt += "\n".join(
+            [f'Title: {a["title"]}\nURL: {a["url"]}' for a in articles]
+        )
 
         data = {"contents": [{"parts": [{"text": prompt}]}]}
         headers = {"Content-Type": "application/json"}
@@ -106,19 +116,41 @@ class GeminiApiClient:
                 self.endpoint, json=data, headers=headers
             ) as response:
                 logger.debug(
-                    "Sent enrich prompt to Gemini API, "
-                    f"response status: {response.status}"
+                    "Sent enrich prompt to Gemini API, response status: %s",
+                    response.status,
                 )
                 response.raise_for_status()
                 result = await response.json()
-                logger.debug(f"Response from Gemini API: {result}")
+                logger.debug("Response from Gemini API: %s", result)
                 return self._parse_gemini_response(result)
         except aiohttp.ClientError as exc:
-            logger.error(f"Request to Gemini API failed: {exc}")
+            logger.error("Request to Gemini API failed: %s", exc)
             return []
 
     @staticmethod
-    def _parse_gemini_response(result: Dict[str, Any]) -> List[Dict[str, str]]:
+    def _extract_json_from_text(text: str) -> Any:
+        """
+        Extracts the first valid JSON array or object from a string, even if wrapped
+        with text, markdown, or code fences.
+        """
+        cleaned = re.sub(
+            r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE
+        )
+        array_match = re.search(r"(\[.*\])", cleaned, re.DOTALL)
+        if array_match:
+            json_str = array_match.group(1)
+        else:
+            obj_match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
+            if obj_match:
+                json_str = obj_match.group(1)
+            else:
+                raise ValueError("No valid JSON array or object found in text.")
+        return json.loads(json_str)
+
+    @classmethod
+    def _parse_gemini_response(
+        cls, result: Dict[str, Any]
+    ) -> List[Dict[str, str]]:
         """
         Parses the Gemini API response, extracting the relevant articles.
 
@@ -134,16 +166,19 @@ class GeminiApiClient:
             .get("parts", [{}])[0]
             .get("text", "")
         )
-        logger.debug(f"Raw text from Gemini: {raw_text}")
+        logger.debug("Raw text from Gemini: %r", raw_text)
         try:
-            cleaned_text = re.sub(r"```json|```", "", raw_text).strip()
-            parsed_data = json.loads(cleaned_text)
-            logger.info(
-                f"Successfully parsed {len(parsed_data)} articles from Gemini response."
-            )
-            return parsed_data
-        except json.JSONDecodeError as exc:
-            logger.error(f"Failed to parse JSON from Gemini response: {exc}")
+            parsed_data = cls._extract_json_from_text(raw_text)
+            if isinstance(parsed_data, list):
+                logger.info(
+                    "Successfully parsed %d articles from Gemini response.",
+                    len(parsed_data),
+                )
+                return parsed_data
+            logger.error("Parsed data is not a list.")
+            return []
+        except Exception as exc:
+            logger.error("Failed to parse JSON from Gemini response: %s", exc)
             return []
 
 

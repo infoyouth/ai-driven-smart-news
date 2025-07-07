@@ -17,6 +17,7 @@ from logger.logger_config import setup_logger
 from core.api_config_loader import APIConfigLoader
 from urllib.parse import urljoin
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta
 
 logger = setup_logger()
 
@@ -83,12 +84,16 @@ class NewsFetcher:
         endpoint = self._construct_endpoint(
             source, "top_headlines", country=country, category=category
         )
+        now = datetime.utcnow()
+        from_date = (now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
         params = {
             "apiKey": source.get("api_key"),
             "country": country,
             "category": category,
             "pageSize": source["default_params"]["pageSize"],
             "language": source["default_params"]["language"],
+            "from": from_date,  # Only last 24 hours
+            "sortBy": "publishedAt",  # Latest first
         }
 
         try:

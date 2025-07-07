@@ -95,7 +95,7 @@ class GeminiApiClient:
         """
         prompt = (
             "For each news article below, do the following:\n"
-            "- Assign a topic from [Space, AI, Politics, Health, Science, Tech, Other].\n"
+            "- Assign a topic from [Space, AI, Politics, Health, Science, Tech].\n"
             "- Suggest an appropriate emoji for that topic.\n"
             "- Write a concise 1-sentence summary.\n"
             "Reply as a JSON list, where each item is:\n"
@@ -104,9 +104,7 @@ class GeminiApiClient:
             "Output only valid JSON. Do not add any extra text, comments, or markdown "
             "code blocks.\n"
         )
-        prompt += "\n".join(
-            [f'Title: {a["title"]}\nURL: {a["url"]}' for a in articles]
-        )
+        prompt += "\n".join([f'Title: {a["title"]}\nURL: {a["url"]}' for a in articles])
 
         data = {"contents": [{"parts": [{"text": prompt}]}]}
         headers = {"Content-Type": "application/json"}
@@ -129,36 +127,52 @@ class GeminiApiClient:
 
     @staticmethod
     def _extract_json_from_text(text: str):
-    """
-    Extracts the first valid JSON array/object from a string,
-    even if wrapped with markdown or truncated.
-    """
-    # Remove code fences and leading/trailing whitespace
-    cleaned = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE)
-    # Find the first JSON array or object
-    array_match = re.search(r"(\[.*\])", cleaned, re.DOTALL)
-    if array_match:
-        json_str = array_match.group(1)
-    else:
-        obj_match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
-        if obj_match:
-            json_str = obj_match.group(1)
-        else:
-            raise ValueError("No valid JSON array or object found in text.")
+        """
+        Extracts the first valid JSON array/object from a string,
+        even if wrapped with markdown or truncated.
+        """
+        # Remove all code fences (``` or ```json) and leading/trailing whitespace
+        cleaned = (
+            re.sub(r"```(?:json)?", "", text, flags=re.IGNORECASE)
+            .replace("```", "")
+            .strip()
+        )
 
-    # Try to parse the JSON, truncate if incomplete
-    # Try stepwise: longest prefix that parses as valid JSON
-    for i in range(len(json_str), 1, -1):
+        # Try to parse the whole cleaned string first
         try:
-            return json.loads(json_str[:i])
-        except json.JSONDecodeError:
-            continue
-    raise ValueError("Failed to parse any valid JSON from text.")
+            return json.loads(cleaned)
+        except Exception:
+            pass
+
+        # Try to find the first JSON array
+        array_match = re.search(r"\[.*\]", cleaned, re.DOTALL)
+        if array_match:
+            json_str = array_match.group(0)
+            try:
+                return json.loads(json_str)
+            except Exception:
+                pass
+
+        # Try to find the first JSON object
+        obj_match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+        if obj_match:
+            json_str = obj_match.group(0)
+            try:
+                return json.loads(json_str)
+            except Exception:
+                pass
+
+        # Try to fix common issues: trailing commas
+        cleaned = re.sub(r",\s*([\]}])", r"\1", cleaned)
+        try:
+            return json.loads(cleaned)
+        except Exception:
+            pass
+
+        raise ValueError("Failed to parse any valid JSON from text.")
 
     @classmethod
-    def _parse_gemini_response(
-        cls, result: Dict[str, Any]
-    ) -> List[Dict[str, str]]:
+    def _parse_gemini_response(cls, result: Dict[str, Any]) -> List[Dict[str, str]]:
         """
         Parses the Gemini API response, extracting the relevant articles.
 

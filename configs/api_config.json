@@ -15,6 +15,36 @@
       "available_sources": ["bbc-news", "cnn", "fox-news", "google-news"],
       "available_countries": ["in", "us", "gb"],
       "available_categories": ["general", "health", "science", "technology"]
+    },
+    {
+      "name": "HackerNews",
+      "base_url": "https://hn.algolia.com/api/v1/",
+      "endpoints": {
+        "top_headlines": "search?tags=front_page"
+      },
+      "default_params": {
+        "hitsPerPage": 20
+      },
+      "response_mapping": {
+        "articles_path": "hits",
+        "title": "title",
+        "url": "url"
+      }
+    },
+    {
+      "name": "Reddit",
+      "base_url": "https://www.reddit.com/",
+      "endpoints": {
+        "top_headlines": "top.json"
+      },
+      "default_params": {
+        "limit": 20
+      },
+      "response_mapping": {
+        "articles_path": "data.children",
+        "title": "data.title",
+        "url": "data.url"
+      }
     }
   ]
 }

@@ -40,7 +40,12 @@ if __name__ == "__main__":
         # Fetch news
         logger.info("Fetching the latest news articles.")
         news_fetcher = NewsFetcher(api_config_loader)
-        latest_news = news_fetcher.fetch_latest_news("NewsAPI")
+        all_latest_news = []
+        for source in api_config_loader.get_all_sources():
+            name = source.get("name")
+            logger.info(f"Fetching latest news from source: {name}")
+            latest_news = news_fetcher.fetch_latest_news(name)
+            all_latest_news.extend(latest_news)
 
         if not latest_news:
             logger.warning("No latest news found. Skipping GeminiNewsProcessor.")

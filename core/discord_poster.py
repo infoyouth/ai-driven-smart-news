@@ -38,7 +38,7 @@ class NewsDiscordFormatter:
         for idx, item in enumerate(news_items):
             title = item.get("title")
             url = item.get("url")
-            emoji = item.get("emoji", "📰")
+            emoji = item.get("emoji") or "📰"
             if not title or not url:
                 logger.warning(
                     "Skipping article at index %d due to missing title or url",

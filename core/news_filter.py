@@ -64,10 +64,21 @@ def filter_top_n(
         # timestamp are treated as older (datetime.min) and keep original order.
         from datetime import datetime
 
+        # If any parsed datetimes include tzinfo, make the sentinel tz-aware
+        any_tz = any(
+            (x["_parsed_at"].tzinfo is not None)
+            for x in annotated
+            if x["_parsed_at"] is not None
+        )
+        if any_tz:
+            from datetime import timezone
+
+            sentinel = datetime.min.replace(tzinfo=timezone.utc)
+        else:
+            sentinel = datetime.min
+
         def _key(x: Dict[str, Any]):
-            parsed_val = (
-                x["_parsed_at"] if x["_parsed_at"] is not None else datetime.min
-            )
+            parsed_val = x["_parsed_at"] if x["_parsed_at"] is not None else sentinel
             # Return a sortable value (datetime) for comparison in sort
             return parsed_val
 

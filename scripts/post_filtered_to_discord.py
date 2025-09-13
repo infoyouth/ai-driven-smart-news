@@ -18,7 +18,13 @@ import argparse
 try:
     import requests  # type: ignore
 except Exception:
-    requests = None
+    from types import SimpleNamespace as _SimpleNS
+
+    # When `requests` isn't available at runtime (e.g., in CI lint steps),
+    # assign a simple sentinel object with the same name so static type
+    # checkers and runtime checks can still operate. This avoids mypy
+    # treating the variable as `None` which conflicts with module type.
+    requests = _SimpleNS()
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

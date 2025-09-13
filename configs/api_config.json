@@ -18,9 +18,8 @@
         "articles_path": "articles",
         "title": "title",
         "url": "url",
-        "description": "description"
-      ,
-      "published_at_path": "publishedAt"
+        "description": "description",
+        "published_at_path": "publishedAt"
       },
       "filter_limit": 10,
       "available_sources": ["bbc-news", "cnn", "fox-news", "google-news"],
@@ -43,13 +42,10 @@
         "articles_path": "hits",
         "title": "title",
         "url": "url",
-        "description": "story_text"
-      ,
-      "published_at_path": "created_at"
-      }
-      ,
+        "description": "story_text",
+        "published_at_path": "created_at"
+      },
       "filter_limit": 10
     }
   ]
 }
-

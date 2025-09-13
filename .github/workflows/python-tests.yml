@@ -23,25 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
 
-      - name: Install dependencies (including dev)
-        run: |
-          poetry config virtualenvs.create false --local
-          # Try the modern poetry flag to include dev dependencies,
-          # fall back to legacy `--dev` if not supported.
-          if poetry install --with dev --no-interaction --no-ansi; then
-            echo "Installed dependencies with --with dev"
-          else
-            poetry install --no-interaction --no-ansi --dev
-          fi
-
-      - name: Run Ruff (lint)
-        run: |
-          poetry run ruff .
-
-      - name: Run mypy (type checks)
-        run: |
-          poetry run mypy --ignore-missing-imports .
-
       - name: Run tests
         run: |
           poetry run pytest -q

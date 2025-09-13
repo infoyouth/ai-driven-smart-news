@@ -1,8 +1,7 @@
-"""
-Discord News Full Pipeline
+"""Discord News Full Pipeline
 
-Reads raw news JSON, enriches with Gemini (adds topic, emoji, summary), and writes
-Discord-ready Markdown (emoji + title link per line) to a text file.
+Reads raw news JSON, enriches with Gemini (adds topic, emoji, summary), and
+writes Discord-ready Markdown (emoji + title link per line) to a text file.
 
 Usage:
     python discord_news_full_pipeline.py input.json output.txt
@@ -42,7 +41,8 @@ class NewsDiscordFormatter:
             emoji = item.get("emoji", "📰")
             if not title or not url:
                 logger.warning(
-                    f"Skipping article at index {idx} due to missing title or url: {item}"
+                    "Skipping article at index %d due to missing title or url",
+                    idx,
                 )
                 continue
             lines.append(f"{emoji} [{title}]({url})")
@@ -60,6 +60,7 @@ class NewsDiscordFormatter:
             except aiohttp.ClientError as e:
                 logger.error("Failed to enrich articles: %s", e)
                 raise
+
         logger.info("Enrichment complete. Total articles enriched: %d", len(enriched))
         return enriched
 

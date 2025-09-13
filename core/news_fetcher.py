@@ -11,8 +11,8 @@ and categories, as well as fetch the latest news across all configurations.
 Author: infoyouth
 Date: 2025-06-08
 """
-import requests
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
+import requests  # type: ignore
 from logger.logger_config import setup_logger
 from core.api_config_loader import APIConfigLoader
 from urllib.parse import urljoin
@@ -22,11 +22,14 @@ from datetime import datetime, timedelta
 logger = setup_logger()
 
 
-def get_by_path(obj, path):
-    """Helper to get nested data by dot-separated path."""
+def get_by_path(obj: Dict[str, Any], path: str) -> List[Any]:
+    """Helper to get nested data by dot-separated path. Return list or []"""
+    cur: Any = obj
     for part in path.split("."):
-        obj = obj.get(part, {})
-    return obj if isinstance(obj, list) else []
+        if not isinstance(cur, dict):
+            return []
+        cur = cur.get(part, {})
+    return cur if isinstance(cur, list) else []
 
 
 def get_value_by_path(obj, path: Optional[str]):
@@ -165,9 +168,9 @@ if __name__ == "__main__":
         fetcher = NewsFetcher(loader)
         all_sources = loader.get_all_sources()
         for source in all_sources:
-            name = source.get("name")
+            name = source.get("name") or ""
             logger.info(f"Fetching news from source: {name}")
-            news = fetcher.fetch_news(name)
+            news = fetcher.fetch_news(str(name))
             logger.info(f"Fetched news from {name}: {news}")
     except Exception as e:
         logger.error(f"Error: {e}")

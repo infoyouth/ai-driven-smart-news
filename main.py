@@ -22,8 +22,16 @@ from logger.logger_config import setup_logger
 logger = setup_logger()
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--enrich', action='store_true', help='Call Gemini to enrich filtered articles and write enriched_<source>.json')
-    parser.add_argument('--dry-run', action='store_true', help='Do not call external APIs (Gemini) when set; still write filtered files')
+    parser.add_argument(
+        "--enrich",
+        action="store_true",
+        help="Call Gemini to enrich filtered articles and write enriched_<source>.json",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Do not call external APIs (Gemini) when set; still write filtered files",
+    )
     args = parser.parse_args()
     CONFIG_PATH = "configs/api_config.json"
     RAW_SUFFIX = "_latest.json"
@@ -76,9 +84,13 @@ if __name__ == "__main__":
             # Optionally enrich using Gemini and save enriched_<source>.json
             if args.enrich and not args.dry_run:
                 try:
-                    logger.info(f"Enriching filtered articles for '{name}' using Gemini")
+                    logger.info(
+                        f"Enriching filtered articles for '{name}' using Gemini"
+                    )
                     enriched = enrich_articles_sync(filtered)
-                    enriched_filename = f"enriched_{name.lower().replace(' ', '_')}.json"
+                    enriched_filename = (
+                        f"enriched_{name.lower().replace(' ', '_')}.json"
+                    )
                     NewsSaver.save_news_to_file(enriched, enriched_filename)
                     logger.info(f"Saved enriched articles to {enriched_filename}")
                 except Exception as e:

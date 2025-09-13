@@ -87,9 +87,11 @@ jobs:
           file=filtered_newsapi.json
           if [ -f "$file" ] && [ -s "$file" ]; then
             DELIM="END_NEWSAPI_$(uuidgen)"
-            echo "content<<${DELIM}" >> $GITHUB_OUTPUT
-            cat "$file" >> $GITHUB_OUTPUT
-            echo "${DELIM}" >> $GITHUB_OUTPUT
+            {
+              printf 'content<<%s\n' "$DELIM"
+              cat "$file"
+              printf '%s\n' "$DELIM"
+            } >> "$GITHUB_OUTPUT"
             echo "Read $file into step output"
           else
             echo "No $file to read"
@@ -106,7 +108,7 @@ jobs:
           username: 'Youth Innovations'
           custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
 
-      - name: � Read filtered_hackernews.json into step output
+      - name: 🔁 Read filtered_hackernews.json into step output
         id: read_hackernews
         if: ${{ env.no_filtered_files == 'false' }}
         shell: bash
@@ -115,9 +117,11 @@ jobs:
           file=filtered_hackernews.json
           if [ -f "$file" ] && [ -s "$file" ]; then
             DELIM="END_HACKERNEWS_$(uuidgen)"
-            echo "content<<${DELIM}" >> $GITHUB_OUTPUT
-            cat "$file" >> $GITHUB_OUTPUT
-            echo "${DELIM}" >> $GITHUB_OUTPUT
+            {
+              printf 'content<<%s\n' "$DELIM"
+              cat "$file"
+              printf '%s\n' "$DELIM"
+            } >> "$GITHUB_OUTPUT"
             echo "Read $file into step output"
           else
             echo "No $file to read"

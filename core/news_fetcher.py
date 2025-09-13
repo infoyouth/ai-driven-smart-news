@@ -11,7 +11,6 @@ and categories, as well as fetch the latest news across all configurations.
 Author: infoyouth
 Date: 2025-06-08
 """
-import os
 import requests
 from typing import Optional, List, Dict
 from logger.logger_config import setup_logger
@@ -28,6 +27,20 @@ def get_by_path(obj, path):
     for part in path.split("."):
         obj = obj.get(part, {})
     return obj if isinstance(obj, list) else []
+
+
+def get_value_by_path(obj, path: Optional[str]):
+    """Get a nested value from a dict by dot-separated path. Return None if missing."""
+    if not path:
+        return None
+    cur = obj
+    for part in path.split("."):
+        if not isinstance(cur, dict):
+            return None
+        cur = cur.get(part)
+        if cur is None:
+            return None
+    return cur
 
 
 class NewsFetcher:
@@ -91,6 +104,7 @@ class NewsFetcher:
                     "description": item.get(
                         mapping.get("description", "description"), ""
                     ),
+                    "published_at": get_value_by_path(item, mapping.get("published_at_path")),
                 }
                 if article["title"] and article["url"]:
                     articles.append(article)

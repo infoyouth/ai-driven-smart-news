@@ -4,6 +4,8 @@
       "name": "NewsAPI",
       "base_url": "https://newsapi.org/",
       "api_key_env": "NEWSAPI_KEY",
+      "requires_auth": true,
+      "headers": {},
       "endpoints": {
         "top_headlines": "v2/top-headlines",
         "everything": "v2/everything"
@@ -12,6 +14,15 @@
         "language": "en",
         "pageSize": 20
       },
+      "response_mapping": {
+        "articles_path": "articles",
+        "title": "title",
+        "url": "url",
+        "description": "description"
+      ,
+      "published_at_path": "publishedAt"
+      },
+      "filter_limit": 10,
       "available_sources": ["bbc-news", "cnn", "fox-news", "google-news"],
       "available_countries": ["in", "us", "gb"],
       "available_categories": ["general", "health", "science", "technology"]
@@ -19,6 +30,9 @@
     {
       "name": "HackerNews",
       "base_url": "https://hn.algolia.com/api/v1/",
+      "api_key_env": null,
+      "requires_auth": false,
+      "headers": {},
       "endpoints": {
         "top_headlines": "search?tags=front_page"
       },
@@ -28,23 +42,14 @@
       "response_mapping": {
         "articles_path": "hits",
         "title": "title",
-        "url": "url"
+        "url": "url",
+        "description": "story_text"
+      ,
+      "published_at_path": "created_at"
       }
-    },
-    {
-      "name": "Reddit",
-      "base_url": "https://www.reddit.com/",
-      "endpoints": {
-        "top_headlines": "top.json"
-      },
-      "default_params": {
-        "limit": 20
-      },
-      "response_mapping": {
-        "articles_path": "data.children",
-        "title": "data.title",
-        "url": "data.url"
-      }
+      ,
+      "filter_limit": 10
     }
   ]
 }
+

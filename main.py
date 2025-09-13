@@ -14,12 +14,8 @@ Date: 2025-06-08
 from core.api_config_loader import APIConfigLoader
 from core.news_fetcher import NewsFetcher
 from core.news_saver import NewsSaver
-from core.discord_poster import NewsDiscordFormatter  # Import the formatter
+from core.news_filter import filter_top_n
 from logger.logger_config import setup_logger
-from core.gemini_processor import main as gemini_main
-import asyncio
-import os
-from pathlib import Path
 
 logger = setup_logger()
 if __name__ == "__main__":
@@ -55,6 +51,19 @@ if __name__ == "__main__":
 
             logger.info(f"Saving raw news for source '{name}' to {raw_filename}.")
             NewsSaver.save_news_to_file(latest_news, raw_filename)
+
+            # Apply filtering to produce filtered_<source>.json
+            mapping = source.get("response_mapping", {})
+            limit = source.get("filter_limit", 10)
+            try:
+                filtered = filter_top_n(latest_news, mapping, n=limit)
+            except Exception as e:
+                logger.error(f"Error filtering news for {name}: {e}")
+                filtered = latest_news[:limit] if isinstance(latest_news, list) else []
+
+            filtered_filename = f"filtered_{name.lower().replace(' ', '_')}.json"
+            logger.info(f"Saving filtered news for source '{name}' to {filtered_filename}.")
+            NewsSaver.save_news_to_file(filtered, filtered_filename)
 
         logger.info("AI-driven smart news application finished.")
 

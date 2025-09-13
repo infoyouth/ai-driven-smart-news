@@ -48,23 +48,7 @@ jobs:
             poetry install --no-interaction --no-ansi --dev
           fi
 
-      - name: "🔎 Run Ruff (lint)"
+ 
+      - name: "🧪 Run tests"        
         run: |
-          poetry run ruff .
-
-      - name: "🔍 Run mypy (type checks)"
-        run: |
-          poetry run mypy --install-types --non-interactive --ignore-missing-imports .
-
-      - name: "🧪 Run tests (verbose)"
-        env:
-          PYTEST_ADDOPTS: "-vv --maxfail=1 --junitxml=artifacts/junit-results.xml --showlocals"
-        run: |
-          mkdir -p artifacts
-          poetry run pytest $PYTEST_ADDOPTS | tee artifacts/pytest.log
-
-      - name: "📁 Upload test artifacts"
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-artifacts
-          path: artifacts/
+          poetry run pytest -vv

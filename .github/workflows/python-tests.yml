@@ -21,7 +21,16 @@ jobs:
       - name: Install Poetry
         run: |
           python -m pip install --upgrade pip
-          pip install poetry pytest
+          pip install poetry
+
+      - name: Install dependencies (including dev)
+        run: |
+          # Use Poetry to create and populate a virtualenv with dev deps
+          if poetry install --with dev --no-interaction --no-ansi; then
+            echo "Installed dependencies with --with dev"
+          else
+            poetry install --no-interaction --no-ansi --dev
+          fi
 
       - name: Run tests
         run: |

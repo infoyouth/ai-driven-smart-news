@@ -1,4 +1,4 @@
-name: CI - Python tests
+name: "🧪 CI - Python tests"
 
 on:
   push:
@@ -6,32 +6,65 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: "ci-python-tests-${{ github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
-      - name: Checkout
+      - name: "🔁 Checkout code"
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: "🐍 Set up Python 3.11"
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install Poetry
+      - name: "📦 Cache Poetry virtualenv"
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock','**/pyproject.toml') }}
+          restore-keys: |
+            poetry-venv-${{ runner.os }}-
+
+      - name: "🔧 Install Poetry"
         run: |
           python -m pip install --upgrade pip
           pip install poetry
 
-      - name: Install dependencies (including dev)
+      - name: "🧩 Install dependencies (including dev)"
         run: |
-          # Use Poetry to create and populate a virtualenv with dev deps
+          # Let Poetry create and manage its virtualenv so `poetry run` uses
+          # the environment that was actually populated by `poetry install`.
           if poetry install --with dev --no-interaction --no-ansi; then
             echo "Installed dependencies with --with dev"
           else
             poetry install --no-interaction --no-ansi --dev
           fi
 
-      - name: Run tests
+      - name: "🔎 Run Ruff (lint)"
         run: |
-          poetry run pytest -q
+          poetry run ruff .
+
+      - name: "🔍 Run mypy (type checks)"
+        run: |
+          poetry run mypy --install-types --non-interactive --ignore-missing-imports .
+
+      - name: "🧪 Run tests (verbose)"
+        env:
+          PYTEST_ADDOPTS: "-vv --maxfail=1 --junitxml=artifacts/junit-results.xml --showlocals"
+        run: |
+          mkdir -p artifacts
+          poetry run pytest $PYTEST_ADDOPTS | tee artifacts/pytest.log
+
+      - name: "📁 Upload test artifacts"
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: artifacts/

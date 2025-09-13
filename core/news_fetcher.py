@@ -104,7 +104,9 @@ class NewsFetcher:
                     "description": item.get(
                         mapping.get("description", "description"), ""
                     ),
-                    "published_at": get_value_by_path(item, mapping.get("published_at_path")),
+                    "published_at": get_value_by_path(
+                        item, mapping.get("published_at_path")
+                    ),
                 }
                 if article["title"] and article["url"]:
                     articles.append(article)

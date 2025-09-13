@@ -78,30 +78,48 @@ jobs:
             echo "no_filtered_files=false" >> $GITHUB_ENV
           fi
 
-      - name: 🔁 Post filtered files to Discord
+      - name: 🔁 Prepare Discord content env vars
         if: ${{ env.no_filtered_files == 'false' }}
         shell: bash
-        env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           set -euo pipefail
-          for f in filtered_*.json; do
-            echo "Posting $f to Discord"
-            payload_json=$(python3 - <<PY
-import json,sys,os
-f = sys.argv[1]
-with open(f, 'r', encoding='utf-8') as fh:
-    s = fh.read()
-payload = {
-    "username": "Youth Innovations",
-    "content": f"AI-Driven News: {os.path.basename(f)}\n```json\n{s}\n```"
-}
-print(json.dumps(payload))
-PY
-"$f")
-
-            curl -s -H "Content-Type: application/json" -X POST "$DISCORD_WEBHOOK_URL" -d "$payload_json"
-            echo "Posted $f"
+          # Prepare known sources: NewsAPI and HackerNews
+          for src in newsapi hackernews; do
+            file="filtered_${src}.json"
+            if [ -f "$file" ] && [ -s "$file" ]; then
+              VAR_NAME="DISCORD_CONTENT_$(echo "$src" | tr '[:lower:]' '[:upper:]')"
+              DELIM="END_${VAR_NAME}_$(uuidgen)"
+              {
+                echo "${VAR_NAME}<<${DELIM}"
+                cat "$file"
+                echo "${DELIM}"
+              } >> $GITHUB_ENV
+              echo "Wrote $VAR_NAME from $file"
+            else
+              echo "No $file to post (skipping)"
+            fi
           done
+
+      - name: � Notify Discord — NewsAPI
+        if: ${{ env.DISCORD_CONTENT_NEWSAPI != '' }}
+        uses: cabrera-evil/discord-notify-action@v1.0.1
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          title: "AI-Driven Breaking News — NewsAPI"
+          description: ${{ env.DISCORD_CONTENT_NEWSAPI }}
+          include_image: 'true'
+          username: 'Youth Innovations'
+          custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
+
+      - name: 📢 Notify Discord — HackerNews
+        if: ${{ env.DISCORD_CONTENT_HACKERNEWS != '' }}
+        uses: cabrera-evil/discord-notify-action@v1.0.1
+        with:
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          title: "AI-Driven Breaking News — HackerNews"
+          description: ${{ env.DISCORD_CONTENT_HACKERNEWS }}
+          include_image: 'true'
+          username: 'Youth Innovations'
+          custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

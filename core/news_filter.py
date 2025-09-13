@@ -36,7 +36,9 @@ def _parse_date(value: Optional[str]):
         return None
 
 
-def filter_top_n(articles: List[Dict[str, Any]], response_mapping: Dict[str, Any], n: int = 10) -> List[Dict[str, Any]]:
+def filter_top_n(
+    articles: List[Dict[str, Any]], response_mapping: Dict[str, Any], n: int = 10
+) -> List[Dict[str, Any]]:
     """Return top `n` articles ordered by parsed `published_at` where available.
 
     - `response_mapping` should include `published_at_path` (dot-path) if available.
@@ -61,7 +63,9 @@ def filter_top_n(articles: List[Dict[str, Any]], response_mapping: Dict[str, Any
 
         def _key(x):
             has_parsed = x["_parsed_at"] is not None
-            parsed_val = x["_parsed_at"] if x["_parsed_at"] is not None else datetime.min
+            parsed_val = (
+                x["_parsed_at"] if x["_parsed_at"] is not None else datetime.min
+            )
             return (has_parsed, parsed_val)
 
         annotated.sort(key=_key, reverse=True)

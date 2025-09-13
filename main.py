@@ -62,7 +62,9 @@ if __name__ == "__main__":
                 filtered = latest_news[:limit] if isinstance(latest_news, list) else []
 
             filtered_filename = f"filtered_{name.lower().replace(' ', '_')}.json"
-            logger.info(f"Saving filtered news for source '{name}' to {filtered_filename}.")
+            logger.info(
+                f"Saving filtered news for source '{name}' to {filtered_filename}."
+            )
             NewsSaver.save_news_to_file(filtered, filtered_filename)
 
         logger.info("AI-driven smart news application finished.")

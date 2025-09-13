@@ -78,46 +78,58 @@ jobs:
             echo "no_filtered_files=false" >> $GITHUB_ENV
           fi
 
-      - name: 🔁 Prepare Discord content env vars
+      - name: 🔁 Read filtered_newsapi.json into step output
+        id: read_newsapi
         if: ${{ env.no_filtered_files == 'false' }}
         shell: bash
         run: |
           set -euo pipefail
-          # Prepare known sources: NewsAPI and HackerNews
-          for src in newsapi hackernews; do
-            file="filtered_${src}.json"
-            if [ -f "$file" ] && [ -s "$file" ]; then
-              VAR_NAME="DISCORD_CONTENT_$(echo "$src" | tr '[:lower:]' '[:upper:]')"
-              DELIM="END_${VAR_NAME}_$(uuidgen)"
-              {
-                echo "${VAR_NAME}<<${DELIM}"
-                cat "$file"
-                echo "${DELIM}"
-              } >> $GITHUB_ENV
-              echo "Wrote $VAR_NAME from $file"
-            else
-              echo "No $file to post (skipping)"
-            fi
-          done
+          file=filtered_newsapi.json
+          if [ -f "$file" ] && [ -s "$file" ]; then
+            DELIM="END_NEWSAPI_$(uuidgen)"
+            echo "content<<${DELIM}" >> $GITHUB_OUTPUT
+            cat "$file" >> $GITHUB_OUTPUT
+            echo "${DELIM}" >> $GITHUB_OUTPUT
+            echo "Read $file into step output"
+          else
+            echo "No $file to read"
+          fi
 
-      - name: � Notify Discord — NewsAPI
-        if: ${{ env.DISCORD_CONTENT_NEWSAPI != '' }}
+      - name: 📢 Notify Discord — NewsAPI
+        if: ${{ steps.read_newsapi.outputs.content != '' }}
         uses: cabrera-evil/discord-notify-action@v1.0.1
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           title: "AI-Driven Breaking News — NewsAPI"
-          description: ${{ env.DISCORD_CONTENT_NEWSAPI }}
+          description: ${{ steps.read_newsapi.outputs.content }}
           include_image: 'true'
           username: 'Youth Innovations'
           custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
 
+      - name: � Read filtered_hackernews.json into step output
+        id: read_hackernews
+        if: ${{ env.no_filtered_files == 'false' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=filtered_hackernews.json
+          if [ -f "$file" ] && [ -s "$file" ]; then
+            DELIM="END_HACKERNEWS_$(uuidgen)"
+            echo "content<<${DELIM}" >> $GITHUB_OUTPUT
+            cat "$file" >> $GITHUB_OUTPUT
+            echo "${DELIM}" >> $GITHUB_OUTPUT
+            echo "Read $file into step output"
+          else
+            echo "No $file to read"
+          fi
+
       - name: 📢 Notify Discord — HackerNews
-        if: ${{ env.DISCORD_CONTENT_HACKERNEWS != '' }}
+        if: ${{ steps.read_hackernews.outputs.content != '' }}
         uses: cabrera-evil/discord-notify-action@v1.0.1
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           title: "AI-Driven Breaking News — HackerNews"
-          description: ${{ env.DISCORD_CONTENT_HACKERNEWS }}
+          description: ${{ steps.read_hackernews.outputs.content }}
           include_image: 'true'
           username: 'Youth Innovations'
           custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'

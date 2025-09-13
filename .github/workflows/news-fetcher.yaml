@@ -81,34 +81,11 @@ jobs:
       - name: 🔁 Post filtered files to Discord (robust + verbose debug)
         if: ${{ env.no_filtered_files == 'false' }}
         shell: bash
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           set -euo pipefail
-          echo "Listing filtered files:"
-          ls -la filtered_*.json || true
-
-          for f in filtered_*.json; do
-            echo "\n--- Processing $f ---"
-            if [ ! -f "$f" ] || [ ! -s "$f" ]; then
-              echo "Skipping empty or missing $f"
-              continue
-            fi
-
-            echo "File size:" $(stat -c%s "$f") "bytes"
-            echo "SHA256:" $(sha256sum "$f" | awk '{print $1}')
-            echo "First 200 bytes (base64):"
-            head -c 200 "$f" | base64
-            echo "Last 200 bytes (base64):"
-            tail -c 200 "$f" | base64
-            echo "Contains NUL bytes?" $(grep -Pa '\x00' "$f" >/dev/null 2>&1 && echo yes || echo no)
-
-            # Build payload using jq (reads file as raw string) to avoid quoting/encoding pitfalls
-            title="AI-Driven Breaking News — $(basename "$f")"
-            payload=$(jq -Rs --arg title "$title" '{username:"Youth Innovations", title:$title, description:.}' "$f")
-
-            echo "Payload size:" $(printf '%s' "$payload" | wc -c) "bytes"
-            echo "Posting $f to Discord via curl (action fallback)."
-            curl -s -H "Content-Type: application/json" -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -d "$payload" -w "\nHTTP_CODE:%{http_code}\n"
-            echo "Posted $f"
-          done
+          echo "Running scripts/post_filtered_to_discord.py"
+          python3 scripts/post_filtered_to_discord.py
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

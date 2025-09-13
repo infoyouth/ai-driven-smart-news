@@ -21,7 +21,12 @@ parser.add_argument('--dry-run', action='store_true', help='Do not POST to Disco
 parser.add_argument('--webhook', help='Discord webhook URL (overrides DISCORD_WEBHOOK_URL env var)')
 parser.add_argument('--no-per-article', action='store_true', help='Do not post per-article embeds; post whole file as one content block')
 parser.add_argument('--per-article-embed', action='store_true', help='Post per-article as embeds instead of markdown link content')
+parser.add_argument('--per-article', action='store_true', help='Post each article individually as markdown link messages (overrides default grouped-URLs behavior)')
+parser.add_argument('--urls-only', action='store_true', help='(Deprecated) alias for default grouped URLs behavior')
+parser.add_argument('--preview-length', type=int, default=300, help='Number of characters to show for dry-run previews')
 args = parser.parse_args()
+
+PREVIEW_LEN = args.preview_length
 
 WEBHOOK = args.webhook or os.environ.get("DISCORD_WEBHOOK_URL")
 if not WEBHOOK and not args.dry_run:
@@ -60,8 +65,51 @@ for f in files:
         except Exception:
             parsed = None
 
-        if not args.no_per_article and isinstance(parsed, list):
-            print(f"Posting {len(parsed)} articles as individual messages (markdown links by default)")
+        if isinstance(parsed, list):
+            # Default behavior: group URLs into a single message per file (category)
+            if not args.per_article:
+                # Build a simple header from filename
+                chosen_name = os.path.basename(chosen)
+                display = (
+                    chosen_name
+                    .replace('filtered_', '')
+                    .replace('enriched_', '')
+                    .replace('.json', '')
+                    .replace('_', ' ')
+                    .title()
+                )
+                urls = [a.get('url') or a.get('link') for a in parsed if (a.get('url') or a.get('link'))]
+                content_lines = [f"**{display}**"]
+                content_lines += urls
+                content = "\n".join(content_lines)
+                max_len = 1900
+                truncated = False
+                if len(content) > max_len:
+                    content = content[: max_len - 20] + "\n... (truncated)"
+                    truncated = True
+                payload = { 'username': 'Youth Innovations', 'content': content }
+                print(f"Posting {len(urls)} URLs as a single message for '{display}'")
+                print("Payload byte size:", len(json.dumps(payload, ensure_ascii=False).encode('utf-8')))
+                if args.dry_run:
+                    print(f"DRY_RUN: would POST content (first {PREVIEW_LEN} chars):")
+                    print(content[:PREVIEW_LEN])
+                    continue
+                    continue
+                if requests is None:
+                    print("The 'requests' package is required to post to Discord. Install it or run with --dry-run", file=sys.stderr)
+                    continue
+                if not WEBHOOK or not (WEBHOOK.startswith('http://') or WEBHOOK.startswith('https://')):
+                    print(f"Invalid or missing webhook URL: {WEBHOOK}", file=sys.stderr)
+                    continue
+                try:
+                    r = requests.post(WEBHOOK, json=payload, headers={"Content-Type":"application/json"}, timeout=15)
+                    print(r.status_code, r.text)
+                except Exception as e:
+                    print(f"HTTP POST failed for grouped URLs: {e}", file=sys.stderr)
+                continue
+
+            # If per-article flag is set, fall back to previous per-article posting behavior
+            print(f"Posting {len(parsed)} articles as individual messages (markdown links)")
             for idx, art in enumerate(parsed, start=1):
                 a_title = art.get('title') or art.get('headline') or 'Untitled'
                 a_url = art.get('url') or art.get('link') or ''
@@ -128,8 +176,8 @@ for f in files:
 
         # If dry-run, just print the payload summary and skip network calls
         if args.dry_run:
-            print("DRY_RUN: would POST payload (first 200 chars):")
-            print(payload["content"][:200])
+            print(f"DRY_RUN: would POST payload (first {PREVIEW_LEN} chars):")
+            print(payload["content"][:PREVIEW_LEN])
             continue
 
         # Validate requests and webhook

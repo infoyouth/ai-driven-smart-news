@@ -11,8 +11,8 @@ and categories, as well as fetch the latest news across all configurations.
 Author: infoyouth
 Date: 2025-06-08
 """
-import requests
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
+import requests  # type: ignore
 from logger.logger_config import setup_logger
 from core.api_config_loader import APIConfigLoader
 from urllib.parse import urljoin
@@ -22,42 +22,38 @@ from datetime import datetime, timedelta
 logger = setup_logger()
 
 
+def get_by_path(obj: Dict[str, Any], path: str) -> List[Any]:
+    """Helper to get nested data by dot-separated path. Return list or []"""
+    cur: Any = obj
+    for part in path.split("."):
+        if not isinstance(cur, dict):
+            return []
+        cur = cur.get(part, {})
+    return cur if isinstance(cur, list) else []
+
+
+def get_value_by_path(obj, path: Optional[str]):
+    """Get a nested value from a dict by dot-separated path. Return None if missing."""
+    if not path:
+        return None
+    cur = obj
+    for part in path.split("."):
+        if not isinstance(cur, dict):
+            return None
+        cur = cur.get(part)
+        if cur is None:
+            return None
+    return cur
+
+
 class NewsFetcher:
-    """
-    Handles fetching news from various sources.
-
-    Attributes:
-        api_config_loader (APIConfigLoader): Instance of APIConfigLoader.
-    """
-
     def __init__(self, api_config_loader: APIConfigLoader):
-        """
-        Initialize the NewsFetcher.
-
-        Args:
-            api_config_loader (APIConfigLoader): Instance of APIConfigLoader.
-        """
         self.api_config_loader = api_config_loader
 
     def _construct_endpoint(self, source: dict, endpoint_name: str, **kwargs) -> str:
-        """
-        Construct the endpoint URL dynamically.
-
-        Args:
-            source (dict): Source configuration.
-            endpoint_name (str): Name of the endpoint.
-            kwargs: Dynamic parameters for the endpoint.
-
-        Returns:
-            str: Constructed endpoint URL.
-        """
-        logger.debug(f"Source configuration: {source}")
         base_url = source["base_url"]
-        endpoint = source["endpoints"][endpoint_name]
-        endpoint = urljoin(base_url, endpoint)
-        for key, value in kwargs.items():
-            endpoint = endpoint.replace(f"<{key}>", value)
-        return endpoint
+        endpoint_path = source["endpoints"][endpoint_name]
+        return urljoin(base_url, endpoint_path)
 
     def fetch_news(
         self,
@@ -65,83 +61,103 @@ class NewsFetcher:
         country: Optional[str] = None,
         category: Optional[str] = None,
     ) -> Dict:
-        """
-        Fetch news from the specified source.
-
-        Args:
-            source_name (str): Name of the source.
-            country (str, optional): Country code.
-            category (str, optional): News category.
-
-        Returns:
-            dict: Fetched news data.
-        """
         source = self.api_config_loader.get_source(source_name)
         if not source:
             logger.error(f"Source not found: {source_name}")
             return {}
 
         endpoint = self._construct_endpoint(
-            source, "top_headlines", country=country, category=category
+            source, "top_headlines", country=country or "", category=category or ""
         )
+
+        params = dict(source.get("default_params", {}))
+
+        # Only add if the values are passed and allowed
+        if country:
+            params["country"] = country
+        if category:
+            params["category"] = category
+
+        # Add time filter if supported
         now = datetime.utcnow()
-        from_date = (now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        params = {
-            "apiKey": source.get("api_key"),
-            "country": country,
-            "category": category,
-            "pageSize": source["default_params"]["pageSize"],
-            "language": source["default_params"]["language"],
-            "from": from_date,  # Only last 24 hours
-            "sortBy": "publishedAt",  # Latest first
-        }
+        if "from" in params:
+            params["from"] = (now - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        if "sortBy" in params:
+            params["sortBy"] = "publishedAt"
+
+        headers = source.get("headers", {})
+
+        if source.get("requires_auth") and source.get("api_key"):
+            # Respect key passing format (commonly via query param)
+            params["apiKey"] = source["api_key"]
 
         try:
-            response = requests.get(endpoint, params=params)
+            response = requests.get(endpoint, params=params, headers=headers)
             response.raise_for_status()
             data = response.json()
-            if "articles" not in data:
-                logger.error(f"Invalid response structure: {data}")
-                return {}
-            logger.info(f"Fetched news for country: {country}, category: {category}")
-            return data
+
+            mapping = source.get("response_mapping", {})
+            items = get_by_path(data, mapping.get("articles_path", "articles"))
+
+            articles = []
+            for item in items:
+                article = {
+                    "title": item.get(mapping.get("title", "title"), ""),
+                    "url": item.get(mapping.get("url", "url"), ""),
+                    "description": item.get(
+                        mapping.get("description", "description"), ""
+                    ),
+                    "published_at": get_value_by_path(
+                        item, mapping.get("published_at_path")
+                    ),
+                }
+                if article["title"] and article["url"]:
+                    articles.append(article)
+
+            logger.info(f"Fetched {len(articles)} articles from {source_name}")
+            return {"articles": articles}
+
         except requests.exceptions.HTTPError as e:
-            logger.error(f"Error fetching news: {e} (Line: {e.response.status_code})")
-            return {}
+            logger.error(f"HTTP error fetching news from {source_name}: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error fetching news from {source_name}: {e}")
+        return {}
 
     def fetch_latest_news(self, source_name: str) -> List[Dict]:
-        """
-        Fetch the latest news for all countries and categories concurrently.
-
-        Args:
-            source_name (str): Name of the source.
-
-        Returns:
-            list: List of news articles.
-        """
         source = self.api_config_loader.get_source(source_name)
         if not source:
             logger.error(f"Source not found: {source_name}")
             return []
 
+        countries = source.get("available_countries")
+        categories = source.get("available_categories")
+
+        combinations = []
+
+        # Build combinations only if both exist
+        if countries and categories:
+            combinations = [(c, cat) for c in countries for cat in categories]
+        elif countries:
+            combinations = [(c, None) for c in countries]
+        elif categories:
+            combinations = [(None, cat) for cat in categories]
+        else:
+            # No combinations → fetch once
+            combinations = [(None, None)]
+
         results = []
 
-        def fetch_for_country_and_category(country, category):
-            logger.debug(f"Fetching news for country: {country}, category: {category}")
+        def fetch_task(country, category):
             return self.fetch_news(source_name, country=country, category=category)
 
         with ThreadPoolExecutor() as executor:
-            futures = [
-                executor.submit(fetch_for_country_and_category, country, category)
-                for country in source["available_countries"]
-                for category in source["available_categories"]
-            ]
+            futures = [executor.submit(fetch_task, c, cat) for c, cat in combinations]
             for future in futures:
-                news = future.result()
-                if news:
-                    results.extend(news.get("articles", []))
+                result = future.result()
+                if result:
+                    results.extend(result.get("articles", []))
 
-        logger.info(f"Fetched {len(results)} articles.")
+        logger.info(f"Fetched {len(results)} articles from {source_name}.")
         return results
 
 
@@ -150,7 +166,11 @@ if __name__ == "__main__":
     try:
         loader = APIConfigLoader(CONFIG_PATH)
         fetcher = NewsFetcher(loader)
-        news = fetcher.fetch_news("NewsAPI", country="us", category="technology")
-        logger.info(f"Fetched news: {news}")
+        all_sources = loader.get_all_sources()
+        for source in all_sources:
+            name = source.get("name") or ""
+            logger.info(f"Fetching news from source: {name}")
+            news = fetcher.fetch_news(str(name))
+            logger.info(f"Fetched news from {name}: {news}")
     except Exception as e:
         logger.error(f"Error: {e}")

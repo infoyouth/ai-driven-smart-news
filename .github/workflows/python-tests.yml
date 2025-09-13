@@ -1,0 +1,54 @@
+name: "🧪 CI - Python tests"
+
+on:
+  push:
+    branches: [ main, feature/** ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: "ci-python-tests-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: "🔁 Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "🐍 Set up Python 3.11"
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: "📦 Cache Poetry virtualenv"
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock','**/pyproject.toml') }}
+          restore-keys: |
+            poetry-venv-${{ runner.os }}-
+
+      - name: "🔧 Install Poetry"
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+
+      - name: "🧩 Install dependencies (including dev)"
+        run: |
+          # Let Poetry create and manage its virtualenv so `poetry run` uses
+          # the environment that was actually populated by `poetry install`.
+          if poetry install --with dev --no-interaction --no-ansi; then
+            echo "Installed dependencies with --with dev"
+          else
+            poetry install --no-interaction --no-ansi --dev
+          fi
+
+ 
+      - name: "🧪 Run tests"        
+        run: |
+          poetry run pytest -vv

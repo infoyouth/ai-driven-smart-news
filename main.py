@@ -14,20 +14,27 @@ Date: 2025-06-08
 from core.api_config_loader import APIConfigLoader
 from core.news_fetcher import NewsFetcher
 from core.news_saver import NewsSaver
-from core.discord_poster import NewsDiscordFormatter  # Import the formatter
+from core.news_filter import filter_top_n
+from core.gemini_processor import enrich_articles_sync
+import argparse
 from logger.logger_config import setup_logger
-from core.gemini_processor import main as gemini_main
-import asyncio
-import os
-from pathlib import Path
 
 logger = setup_logger()
-
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--enrich",
+        action="store_true",
+        help="Call Gemini to enrich filtered articles and write enriched_<source>.json",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Do not call external APIs (Gemini) when set; still write filtered files",
+    )
+    args = parser.parse_args()
     CONFIG_PATH = "configs/api_config.json"
-    OUTPUT_FILE = "latest_news.json"
-    FILTERED_FILE = "filtered_news.json"
-    DISCORD_OUTPUT_FILE = "output.txt"
+    RAW_SUFFIX = "_latest.json"
 
     try:
         logger.info("Starting the AI-driven smart news application.")
@@ -37,42 +44,60 @@ if __name__ == "__main__":
         api_config_loader = APIConfigLoader(CONFIG_PATH)
         logger.info("API configuration loaded successfully.")
 
-        # Fetch news
-        logger.info("Fetching the latest news articles.")
         news_fetcher = NewsFetcher(api_config_loader)
-        latest_news = news_fetcher.fetch_latest_news("NewsAPI")
 
-        if not latest_news:
-            logger.warning("No latest news found. Skipping GeminiNewsProcessor.")
-        else:
-            logger.info(f"Fetched {len(latest_news)} articles.")
+        for source in api_config_loader.get_all_sources():
+            name = source.get("name")
+            if not name:
+                logger.warning("Found source without a name, skipping.")
+                continue
 
-            # Save news to file
-            logger.info(f"Saving fetched news to {OUTPUT_FILE}.")
-            NewsSaver.save_news_to_file(latest_news, OUTPUT_FILE)
-            logger.info("News saved successfully.")
+            logger.info(f"Fetching latest news from source: {name}")
+            latest_news = news_fetcher.fetch_latest_news(name)
 
-            # Process saved news using GeminiNewsProcessor
-            logger.info("Processing saved news using GeminiNewsProcessor.")
-            asyncio.run(gemini_main())
-            logger.info("GeminiNewsProcessor completed successfully.")
-
-            # Generate Discord-ready output
-            logger.info("Generating Discord-ready output.")
-            api_key = os.environ.get("GEMINI_API_KEY")
-            if not api_key:
-                logger.critical("Set GEMINI_API_KEY environment variable.")
-                raise EnvironmentError("GEMINI_API_KEY not set.")
-
-            discord_formatter = NewsDiscordFormatter(api_key)
-            asyncio.run(
-                discord_formatter.process(
-                    Path(FILTERED_FILE), Path(DISCORD_OUTPUT_FILE)
+            if not latest_news:
+                logger.warning(
+                    f"No latest news found for source '{name}'. Skipping saving."
                 )
+                continue
+
+            raw_filename = f"{name.lower().replace(' ', '_')}{RAW_SUFFIX}"
+
+            logger.info(f"Saving raw news for source '{name}' to {raw_filename}.")
+            NewsSaver.save_news_to_file(latest_news, raw_filename)
+
+            # Apply filtering to produce filtered_<source>.json
+            mapping = source.get("response_mapping", {})
+            limit = source.get("filter_limit", 10)
+            try:
+                filtered = filter_top_n(latest_news, mapping, n=limit)
+            except Exception as e:
+                logger.error(f"Error filtering news for {name}: {e}")
+                filtered = latest_news[:limit] if isinstance(latest_news, list) else []
+
+            filtered_filename = f"filtered_{name.lower().replace(' ', '_')}.json"
+            logger.info(
+                f"Saving filtered news for source '{name}' to {filtered_filename}."
             )
-            logger.info(f"Discord-ready output written to {DISCORD_OUTPUT_FILE}.")
+            NewsSaver.save_news_to_file(filtered, filtered_filename)
+
+            # Optionally enrich using Gemini and save enriched_<source>.json
+            if args.enrich and not args.dry_run:
+                try:
+                    logger.info(
+                        f"Enriching filtered articles for '{name}' using Gemini"
+                    )
+                    enriched = enrich_articles_sync(filtered)
+                    enriched_filename = (
+                        f"enriched_{name.lower().replace(' ', '_')}.json"
+                    )
+                    NewsSaver.save_news_to_file(enriched, enriched_filename)
+                    logger.info(f"Saved enriched articles to {enriched_filename}")
+                except Exception as e:
+                    logger.error(f"Error enriching articles for {name}: {e}")
 
         logger.info("AI-driven smart news application finished.")
+
     except FileNotFoundError as e:
         logger.error(f"Configuration file not found: {e}")
     except Exception as e:

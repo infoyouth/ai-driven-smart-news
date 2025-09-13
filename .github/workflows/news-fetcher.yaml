@@ -67,34 +67,25 @@ jobs:
       - name: ✅ Validate Output Files
         id: validate-output
         run: |
-          if [ ! -f output.txt ] || [ ! -s output.txt ]; then
-            echo "file_exists=false" >> $GITHUB_ENV
+          # Ensure at least one filtered file exists
+          set -e
+          SH_FILES=$(ls filtered_*.json 2>/dev/null || true)
+          if [ -z "$SH_FILES" ]; then
+            echo "no_filtered_files=true" >> $GITHUB_ENV
+            echo "No filtered files found. Exiting with error." >&2
             exit 1
           else
-            echo "file_exists=true" >> $GITHUB_ENV
+            echo "no_filtered_files=false" >> $GITHUB_ENV
           fi
 
-      - name: 🧪 Read Output File Content
-        id: read-output
+      - name: 🔁 Post filtered files to Discord (robust + verbose debug)
+        if: ${{ env.no_filtered_files == 'false' }}
         shell: bash
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          cat output.txt
-          DELIM="END_OF_DISCORD_CONTENT_$(uuidgen)"
-          {
-            echo "DISCORD_CONTENT<<$DELIM"
-            printf "%s\n" "$(cat ./output.txt)"
-            echo "$DELIM"
-          } >> $GITHUB_ENV
-
-      - name: 📢 Notify Discord
-        if: ${{ env.file_exists == 'true' }}
-        uses: cabrera-evil/discord-notify-action@v1.0.1
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: "AI-Driven Breaking News 🚀"
-          description: ${{ env.DISCORD_CONTENT }}
-          include_image: 'true'
-          username: 'Youth Innovations'
-          custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
+          set -euo pipefail
+          echo "Running scripts/post_filtered_to_discord.py"
+          python3 scripts/post_filtered_to_discord.py
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

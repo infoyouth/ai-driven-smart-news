@@ -20,6 +20,7 @@ python = "^3.9"
 requests = "2.32.4"
 colorlog = "^6.7.0"
 aiohttp = "^3.8.5"
+python-dateutil = "^2.8.2"
 
 [tool.poetry.group.dev]
 optional = true
@@ -32,6 +33,7 @@ pylint = "^2.17.5"
 isort = "^5.12.0"
 mypy = "^1.5.1"
 types-requests = "^2.31.0.20240106"
+types-python-dateutil = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

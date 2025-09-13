@@ -94,6 +94,15 @@ class APIConfigLoader:
             (s for s in self.config["sources"] if s["name"] == source_name), None
         )
 
+    def get_all_sources(self) -> list[dict]:
+        """
+        Retrieve the list of all configured sources.
+
+        Returns:
+            list[dict]: All source configurations.
+        """
+        return self.config.get("sources", [])
+
 
 if __name__ == "__main__":
     CONFIG_PATH = "configs/api_config.json"

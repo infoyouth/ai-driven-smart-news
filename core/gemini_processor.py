@@ -1,3 +1,48 @@
+"""gemini_processor.py
+Utility wrapper to call the existing `GeminiApiClient` and provide a simple
+sync-friendly interface for enrichment.
+
+This module exposes `enrich_articles_sync` which accepts a list of article
+dicts and returns enriched article dicts. It uses `aiohttp` under the hood but
+provides a synchronous entrypoint for `main.py`.
+"""
+from typing import List, Dict, Any
+import asyncio
+import os
+from core.gemini_api import GeminiApiClient
+from logger.logger_config import setup_logger
+
+logger = setup_logger()
+
+
+async def _enrich_async(api_key: str, articles: List[Dict[str, Any]]):
+    import aiohttp
+
+    async with aiohttp.ClientSession() as session:
+        client = GeminiApiClient(api_key)
+        enriched = await client.enrich_articles(session, articles)
+        return enriched
+
+
+def enrich_articles_sync(articles: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Enrich articles using Gemini synchronously.
+
+    Returns a list of enriched article dicts. If `GEMINI_API_KEY` is not set
+    or enrichment fails, returns the original articles.
+    """
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        logger.warning("GEMINI_API_KEY not set; skipping enrichment.")
+        return articles
+
+    try:
+        enriched = asyncio.run(_enrich_async(api_key, articles))
+        if enriched:
+            return enriched
+        return articles
+    except Exception as exc:
+        logger.error("Gemini enrichment failed: %s", exc)
+        return articles
 """
 Gemini News Processor
 

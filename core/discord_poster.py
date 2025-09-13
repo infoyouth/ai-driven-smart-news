@@ -35,14 +35,18 @@ class NewsDiscordFormatter:
 
     @staticmethod
     def format_one_liner(news_items: List[Dict[str, str]]) -> str:
-        """
-        Format news items as one-liners for Discord.
-        Each line: emoji [title](url)
-        """
-        logger.debug("Formatting news items to one-liner Discord markdown.")
-        return "\n".join(
-            f"{item['emoji']} [{item['title']}]({item['url']})" for item in news_items
-        )
+        lines = []
+        for idx, item in enumerate(news_items):
+            title = item.get("title")
+            url = item.get("url")
+            emoji = item.get("emoji", "📰")
+            if not title or not url:
+                logger.warning(
+                    f"Skipping article at index {idx} due to missing title or url: {item}"
+                )
+                continue
+            lines.append(f"{emoji} [{title}]({url})")
+        return "\n".join(lines)
 
     async def enrich_news(self, raw_news: List[Dict[str, str]]) -> List[Dict[str, str]]:
         """

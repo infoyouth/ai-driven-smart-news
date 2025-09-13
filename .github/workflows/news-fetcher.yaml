@@ -78,64 +78,37 @@ jobs:
             echo "no_filtered_files=false" >> $GITHUB_ENV
           fi
 
-      - name: 🔁 Read filtered_newsapi.json into step output
-        id: read_newsapi
+      - name: 🔁 Post filtered files to Discord (robust + verbose debug)
         if: ${{ env.no_filtered_files == 'false' }}
         shell: bash
         run: |
           set -euo pipefail
-          file=filtered_newsapi.json
-          if [ -f "$file" ] && [ -s "$file" ]; then
-            DELIM="END_NEWSAPI_$(uuidgen)"
-            {
-              printf 'content<<%s\n' "$DELIM"
-              cat "$file"
-              printf '%s\n' "$DELIM"
-            } >> "$GITHUB_OUTPUT"
-            echo "Read $file into step output"
-          else
-            echo "No $file to read"
-          fi
+          echo "Listing filtered files:"
+          ls -la filtered_*.json || true
 
-      - name: 📢 Notify Discord — NewsAPI
-        if: ${{ steps.read_newsapi.outputs.content != '' }}
-        uses: cabrera-evil/discord-notify-action@v1.0.1
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: "AI-Driven Breaking News — NewsAPI"
-          description: ${{ steps.read_newsapi.outputs.content }}
-          include_image: 'true'
-          username: 'Youth Innovations'
-          custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
+          for f in filtered_*.json; do
+            echo "\n--- Processing $f ---"
+            if [ ! -f "$f" ] || [ ! -s "$f" ]; then
+              echo "Skipping empty or missing $f"
+              continue
+            fi
 
-      - name: 🔁 Read filtered_hackernews.json into step output
-        id: read_hackernews
-        if: ${{ env.no_filtered_files == 'false' }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          file=filtered_hackernews.json
-          if [ -f "$file" ] && [ -s "$file" ]; then
-            DELIM="END_HACKERNEWS_$(uuidgen)"
-            {
-              printf 'content<<%s\n' "$DELIM"
-              cat "$file"
-              printf '%s\n' "$DELIM"
-            } >> "$GITHUB_OUTPUT"
-            echo "Read $file into step output"
-          else
-            echo "No $file to read"
-          fi
+            echo "File size:" $(stat -c%s "$f") "bytes"
+            echo "SHA256:" $(sha256sum "$f" | awk '{print $1}')
+            echo "First 200 bytes (base64):"
+            head -c 200 "$f" | base64
+            echo "Last 200 bytes (base64):"
+            tail -c 200 "$f" | base64
+            echo "Contains NUL bytes?" $(grep -Pa '\x00' "$f" >/dev/null 2>&1 && echo yes || echo no)
 
-      - name: 📢 Notify Discord — HackerNews
-        if: ${{ steps.read_hackernews.outputs.content != '' }}
-        uses: cabrera-evil/discord-notify-action@v1.0.1
-        with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          title: "AI-Driven Breaking News — HackerNews"
-          description: ${{ steps.read_hackernews.outputs.content }}
-          include_image: 'true'
-          username: 'Youth Innovations'
-          custom_image_url: 'https://raw.githubusercontent.com/infoyouth/infoyouth.github.io/main/configs/image/favicon-48x48.png'
+            # Build payload using jq (reads file as raw string) to avoid quoting/encoding pitfalls
+            title="AI-Driven Breaking News — $(basename "$f")"
+            payload=$(jq -Rs --arg title "$title" '{username:"Youth Innovations", title:$title, description:.}' "$f")
+
+            echo "Payload size:" $(printf '%s' "$payload" | wc -c) "bytes"
+            echo "Posting $f to Discord via curl (action fallback)."
+            curl -s -H "Content-Type: application/json" -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -d "$payload" -w "\nHTTP_CODE:%{http_code}\n"
+            echo "Posted $f"
+          done
       - name: 🌍 Beautify Logs
         run: echo "🎉 Workflow completed successfully! 🎉"

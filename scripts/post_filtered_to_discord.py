@@ -121,13 +121,28 @@ for f in files:
                     .replace("_", " ")
                     .title()
                 )
-                urls = [
-                    a.get("url") or a.get("link")
-                    for a in parsed
-                    if (a.get("url") or a.get("link"))
-                ]
+                # Build markdown links using the article title as the link text.
+                # Prefer processed_title or title; include emoji when present.
+                links = []
+                for a in parsed:
+                    a_url = a.get("url") or a.get("link")
+                    if not a_url:
+                        continue
+                    a_title = (
+                        a.get("processed_title")
+                        or a.get("title")
+                        or a.get("headline")
+                        or a_url
+                    )
+                    emoji = (a.get("emoji") or "").strip() or ""
+                    text = (
+                        f"{emoji} [{a_title}]({a_url})"
+                        if emoji
+                        else f"[{a_title}]({a_url})"
+                    )
+                    links.append(text)
                 content_lines = ["**" + display + "**"]
-                content_lines += urls
+                content_lines += links
                 content = "\n".join(content_lines)
                 max_len = 1900
                 truncated = False
@@ -138,7 +153,9 @@ for f in files:
                     "username": "Youth Innovations",
                     "content": content,
                 }
-                print("Posting %d URLs as a single message for:" % len(urls))
+                print(
+                    "Posting %d items as a single message for:" % len(links)
+                )
                 print(display)
                 size_bytes = len(
                     json.dumps(payload, ensure_ascii=False).encode("utf-8")

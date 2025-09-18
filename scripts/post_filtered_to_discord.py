@@ -141,8 +141,10 @@ for f in files:
                         else f"[{a_title}]({a_url})"
                     )
                     links.append(text)
-                content_lines = ["**" + display + "**"]
-                content_lines += links
+                # Create content with exactly one line per article
+                # (emoji + markdown link). Do not include headers or extra text.
+                # The channel will receive a clean list of links only.
+                content_lines = links
                 content = "\n".join(content_lines)
                 max_len = 1900
                 truncated = False

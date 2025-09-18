@@ -162,12 +162,74 @@ class GeminiApiClient:
             except Exception:
                 pass
 
-        # Try to fix common issues: trailing commas
-        cleaned = re.sub(r",\s*([\]}])", r"\1", cleaned)
-        try:
-            return json.loads(cleaned)
-        except Exception:
-            pass
+            # Final recovery attempt: if there's an array-like region, try to
+            # split it into individual objects and parse each one. This helps when
+            # Gemini returns an array where one item is malformed.
+            arr_match = re.search(r"\[.*\]", cleaned, flags=re.DOTALL)
+            if arr_match:
+                arr_text = arr_match.group(0)
+
+                # Trim surrounding brackets
+                inner = arr_text[1:-1]
+
+                # Split into items by scanning and tracking braces depth
+                items = []
+                cur = []
+                depth = 0
+                for ch in inner:
+                    cur.append(ch)
+                    if ch == "{" or ch == "[":
+                        depth += 1
+                    elif ch == "}" or ch == "]":
+                        depth -= 1
+                    # when depth is zero and we hit a comma, it's a separator
+                    if depth == 0 and ch == ",":
+                        # pop the comma from current and finalize item
+                        cur.pop()
+                        item_str = "".join(cur).strip()
+                        if item_str:
+                            items.append(item_str)
+                        cur = []
+                # append last item
+                last = "".join(cur).strip()
+                if last:
+                    items.append(last)
+
+                parsed_items = []
+                for it in items:
+                    # Try to ensure braces and clean trailing commas
+                    it_fixed = it.strip()
+                    if not it_fixed.startswith("{"):
+                        it_fixed = "{" + it_fixed
+                    if not it_fixed.endswith("}"):
+                        it_fixed = it_fixed + "}"
+                    it_fixed = re.sub(r",\s*([\]}])", r"\1", it_fixed)
+                    try:
+                        parsed_items.append(json.loads(it_fixed))
+                        continue
+                    except Exception:
+                        pass
+                    try:
+                        import ast
+
+                        parsed_items.append(ast.literal_eval(it_fixed))
+                        continue
+                    except Exception:
+                        # skip malformed item
+                        logger.debug(
+                            "Skipping malformed item during recovery: %s", it[:80]
+                        )
+                        continue
+
+                if parsed_items:
+                    return parsed_items
+
+            # Final attempt: try to fix trailing commas across the whole cleaned text
+            fixed = re.sub(r",\s*([\]}])", r"\1", cleaned)
+            try:
+                return json.loads(fixed)
+            except Exception:
+                pass
 
         raise ValueError("Failed to parse any valid JSON from text.")
 

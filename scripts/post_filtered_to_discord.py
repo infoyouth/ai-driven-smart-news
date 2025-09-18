@@ -18,13 +18,10 @@ import argparse
 try:
     import requests  # type: ignore
 except Exception:
-    from types import SimpleNamespace as _SimpleNS
-
-    # When `requests` isn't available at runtime (e.g., in CI lint steps),
-    # assign a simple sentinel object with the same name so static type
-    # checkers and runtime checks can still operate. This avoids mypy
-    # treating the variable as `None` which conflicts with module type.
-    requests = _SimpleNS()
+    # If requests isn't available, set sentinel to None. The script checks
+    # for None before attempting network calls. In CI and normal runs we
+    # expect `requests` to be installed via Poetry.
+    requests = None
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -84,9 +81,7 @@ if not files:
 
 for f in files:
     try:
-        # Prefer enriched file when available
-        enriched_candidate = f.replace("filtered_", "enriched_")
-        chosen = enriched_candidate if os.path.exists(enriched_candidate) else f
+        chosen = f
         size = os.path.getsize(chosen)
         print(f"\n--- Processing {chosen} ---")
         print(f"File size: {size} bytes")
@@ -103,161 +98,48 @@ for f in files:
         print(base64.b64encode(tail).decode("ascii"))
         print("Contains NUL bytes?", b"\x00" in data)
 
-        # Try to parse JSON array and post per-article by default
+        # Try to parse JSON array and post markdown links
         try:
             parsed = json.loads(data.decode("utf-8", errors="replace"))
         except Exception:
             parsed = None
 
         if isinstance(parsed, list):
-            # Default behavior: group URLs into a single message per file (category)
-            if not args.per_article:
-                # Build a simple header from filename
-                chosen_name = os.path.basename(chosen)
-                display = (
-                    chosen_name.replace("filtered_", "")
-                    .replace("enriched_", "")
-                    .replace(".json", "")
-                    .replace("_", " ")
-                    .title()
-                )
-                # Build markdown links using the article title as the link text.
-                # Prefer processed_title or title; include emoji when present.
-                links = []
-                for a in parsed:
-                    a_url = a.get("url") or a.get("link")
-                    if not a_url:
-                        continue
-                    a_title = (
-                        a.get("processed_title")
-                        or a.get("title")
-                        or a.get("headline")
-                        or a_url
-                    )
-                    emoji = (a.get("emoji") or "").strip() or ""
-                    text = (
-                        f"{emoji} [{a_title}]({a_url})"
-                        if emoji
-                        else f"[{a_title}]({a_url})"
-                    )
-                    links.append(text)
-                # Create content with exactly one line per article
-                # (emoji + markdown link). Do not include headers or extra text.
-                # The channel will receive a clean list of links only.
-                content_lines = links
-                content = "\n".join(content_lines)
-                max_len = 1900
-                truncated = False
-                if len(content) > max_len:
-                    content = content[: max_len - 20] + "\n... (truncated)"
-                    truncated = True
-                payload: Dict[str, Any] = {
-                    "username": "Youth Innovations",
-                    "content": content,
-                }
-                print(
-                    "Posting %d items as a single message for:" % len(links)
-                )
-                print(display)
-                size_bytes = len(
-                    json.dumps(payload, ensure_ascii=False).encode("utf-8")
-                )
-                print("Payload byte size:", size_bytes)
-                if args.dry_run:
-                    print("DRY_RUN: would POST content (preview):")
-                    print(content[:PREVIEW_LEN])
+            links = []
+            for a in parsed:
+                a_url = a.get("url") or a.get("link")
+                if not a_url:
                     continue
-                if requests is None:
-                    print(
-                        "Requests library not available; install or use --dry-run",
-                        file=sys.stderr,
-                    )
-                    continue
-                if not WEBHOOK or not (
-                    WEBHOOK.startswith("http://") or WEBHOOK.startswith("https://")
-                ):
-                    print(f"Invalid or missing webhook URL: {WEBHOOK}", file=sys.stderr)
-                    continue
-                try:
-                    r = requests.post(
-                        WEBHOOK,
-                        json=payload,
-                        headers={"Content-Type": "application/json"},
-                        timeout=15,
-                    )
-                    print(r.status_code, r.text)
-                except Exception as e:
-                    print(f"HTTP POST failed for grouped URLs: {e}", file=sys.stderr)
+                a_title = a.get("title") or a.get("headline") or a_url
+                links.append(f"[{a_title}]({a_url})")
+
+            content = "\n".join(links)
+            max_len = 1900
+            if len(content) > max_len:
+                content = content[: max_len - 20] + "\n... (truncated)"
+
+            payload: Dict[str, Any] = {"username": "Youth Innovations", "content": content}
+            print("Posting %d items as a single message for:" % len(links))
+            print(os.path.basename(chosen))
+            size_bytes = len(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+            print("Payload byte size:", size_bytes)
+            if args.dry_run:
+                print("DRY_RUN: would POST content (preview):")
+                print(content[:PREVIEW_LEN])
                 continue
 
-            # If per-article flag is set, post each article individually
-            print("Posting %d articles as individual messages" % len(parsed))
-            print("markdown link format")
-            for idx, art in enumerate(parsed, start=1):
-                a_title = art.get("title") or art.get("headline") or "Untitled"
-                a_url = art.get("url") or art.get("link") or ""
-                a_desc = art.get("description") or art.get("story_text") or ""
-                # Default: use markdown link in message content for better
-                # readability in channels
-                if args.per_article_embed:
-                    embed = {"title": a_title}
-                    if a_url:
-                        embed["url"] = a_url
-                    if a_desc:
-                        embed["description"] = a_desc[:2048]
-                    payload = {
-                        "username": "Youth Innovations",
-                        "embeds": [embed],
-                    }
-                else:
-                    # format as markdown link: [Title](url)
-                    # include short description if available
-                    if a_url:
-                        link = "[" + a_title + "](" + a_url + ")"
-                    else:
-                        link = a_title
-                    if a_desc:
-                        content = f"{link} — {a_desc[:300]}"
-                    else:
-                        content = link
-                    payload = {
-                        "username": "Youth Innovations",
-                        "content": content,
-                    }
+            if requests is None:
+                print("Requests library not available; install or use --dry-run", file=sys.stderr)
+                continue
+            if not WEBHOOK or not (WEBHOOK.startswith("http://") or WEBHOOK.startswith("https://")):
+                print(f"Invalid or missing webhook URL: {WEBHOOK}", file=sys.stderr)
+                continue
 
-                print("Article %d: %s -> %s" % (idx, a_title, a_url))
-                size_bytes = len(
-                    json.dumps(payload, ensure_ascii=False).encode("utf-8")
-                )
-                print("Payload byte size:", size_bytes)
-                if args.dry_run:
-                    continue
-                if requests is None:
-                    print(
-                        "The 'requests' package is required to post to Discord.",
-                        file=sys.stderr,
-                    )
-                    print("Install requests or run with --dry-run", file=sys.stderr)
-                    break
-                if not WEBHOOK or not (
-                    WEBHOOK.startswith("http://") or WEBHOOK.startswith("https://")
-                ):
-                    print(f"Invalid or missing webhook URL: {WEBHOOK}", file=sys.stderr)
-                    break
-                try:
-                    r = requests.post(
-                        WEBHOOK,
-                        json=payload,
-                        headers={"Content-Type": "application/json"},
-                        timeout=15,
-                    )
-                    print(r.status_code, r.text)
-                except Exception as e:
-                    print(f"HTTP POST failed for article {idx}: {e}", file=sys.stderr)
-                # avoid hitting rate limits
-                import time
-
-                time.sleep(0.4)
+            try:
+                r = requests.post(WEBHOOK, json=payload, headers={"Content-Type": "application/json"}, timeout=15)
+                print(r.status_code, r.text)
+            except Exception as e:
+                print(f"HTTP POST failed for grouped URLs: {e}", file=sys.stderr)
             continue
 
         # Fallback: post whole file as a single content block (truncated)
@@ -270,10 +152,7 @@ for f in files:
         truncated = False
         if len(content) > max_len:
             reserve = (
-                len(title)
-                + len(marker_start)
-                + len(marker_end)
-                + len("\n... (truncated)")
+                len(title) + len(marker_start) + len(marker_end) + len("\n... (truncated)")
             )
             allowed = max_len - reserve
             if allowed < 0:
@@ -281,35 +160,25 @@ for f in files:
             text = text[:allowed]
             content = title + marker_start + text + "\n... (truncated)" + marker_end
             truncated = True
+
         payload = {"username": "Youth Innovations", "content": content}
-        print(
-            "Payload byte size:",
-            len(json.dumps(payload, ensure_ascii=False).encode("utf-8")),
-        )
+        print("Payload byte size:", len(json.dumps(payload, ensure_ascii=False).encode("utf-8")))
         if truncated:
             print("CONTENT_TRUNCATED", file=sys.stderr)
 
-        # If dry-run, just print the payload summary and skip network calls
         if args.dry_run:
             print(f"DRY_RUN: would POST payload (first {PREVIEW_LEN} chars):")
             print(payload["content"][:PREVIEW_LEN])
             continue
 
-        # Validate requests and webhook
         if requests is None:
-            print(
-                "The 'requests' package is required to post to Discord.",
-                file=sys.stderr,
-            )
+            print("The 'requests' package is required to post to Discord.", file=sys.stderr)
             print("Install requests or run with --dry-run", file=sys.stderr)
             continue
-        if not WEBHOOK or not (
-            WEBHOOK.startswith("http://") or WEBHOOK.startswith("https://")
-        ):
+        if not WEBHOOK or not (WEBHOOK.startswith("http://") or WEBHOOK.startswith("https://")):
             print(f"Invalid or missing webhook URL: {WEBHOOK}", file=sys.stderr)
             continue
 
-        # Post to Discord
         headers = {"Content-Type": "application/json"}
         try:
             r = requests.post(WEBHOOK, json=payload, headers=headers, timeout=15)

@@ -1,0 +1,39 @@
+name: Test ResponseIQ Integration
+
+on:
+  workflow_dispatch:       # Allows manual triggering from Actions tab
+  pull_request:            # Runs on PRs to verify no regressions
+    branches: [ main ]
+
+# Permissions required for ResponseIQ to create PRs or Comments
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    name: ResponseIQ E2E Check
+    steps:
+      # 1. Checkout the target repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. Inject a "Known Error" to verify detection works
+      # We create a log file that matches your analyzer's keywords (panic, exception, etc.)
+      - name: Inject Simulated Incident
+        run: |
+          echo "Generating test artifacts..."
+          echo "[2026-02-10 10:00:00] CRITICAL: System encountered an uncontrolled exception" > crash.log
+          echo "[2026-02-10 10:00:01] PANIC: Out of memory during image processing" >> crash.log
+          
+      # 3. Run Your Action (Pointing to your new branch)
+      # Once merged to main, change '@feat/cli-action-support' to '@v1' or '@main'
+      - name: Run ResponseIQ Remediation
+        uses: infoyouth/responseiq@feat/cli-action-support
+        with:
+          target: '.'                    # Scan current directory
+          mode: 'scan'                   # Use 'fix' to test PR creation capability
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # openai_api_key: ${{ secrets.OPENAI_API_KEY }} # Optional: Enable for LLM analysis

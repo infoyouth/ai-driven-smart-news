@@ -31,7 +31,7 @@ jobs:
       # 3. Run Your Action (Pointing to your new branch)
       # Once merged to main, change '@feat/cli-action-support' to '@v1' or '@main'
       - name: Run ResponseIQ Remediation
-        uses: infoyouth/responseiq@v1.1.0
+        uses: infoyouth/responseiq@v1.2.0
         with:
           target: '.'                    # Scan current directory
           mode: 'scan'                   # Use 'fix' to test PR creation capability
